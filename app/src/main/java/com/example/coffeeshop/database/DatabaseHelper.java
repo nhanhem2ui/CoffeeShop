@@ -352,7 +352,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         int result = db.delete(TABLE_CART,
                 COL_CART_USER_ID + " = ?", new String[]{String.valueOf(userId)});
-        return result >= 0;
+        return result > 0;
     }
 
     // ========== ORDER OPERATIONS ==========
