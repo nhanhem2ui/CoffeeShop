@@ -39,6 +39,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Total Revenue"
+                        android:textColor="@color/black"
                         android:textSize="16sp"/>
 
                     <TextView
@@ -46,6 +47,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="$0.00"
+                        android:textColor="@color/gray"
                         android:textSize="32sp"
                         android:textStyle="bold"
                         android:layout_marginTop="8dp"/>
@@ -57,6 +59,7 @@
                 android:layout_height="wrap_content"
                 android:text="Filter Revenue"
                 android:textSize="18sp"
+                android:textColor="@color/black"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp"/>
 
@@ -70,17 +73,20 @@
                     android:id="@+id/radio_day"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/gray"
                     android:text="By Day"/>
 
                 <RadioButton
                     android:id="@+id/radio_month"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/gray"
                     android:text="By Month"/>
 
                 <RadioButton
                     android:id="@+id/radio_year"
                     android:layout_width="wrap_content"
+                    android:textColor="@color/gray"
                     android:layout_height="wrap_content"
                     android:text="By Year"/>
             </RadioGroup>

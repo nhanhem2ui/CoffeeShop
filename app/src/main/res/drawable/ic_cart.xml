@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- cart silhouette in gray -->
+    <path
+        android:fillColor="@color/WarmCream"
+        android:pathData="M7.16,14 l0.84,-2 h7.45 c0.78,0 1.46,-0.45 1.78,-1.14 l1.9,-4.66 L20,4 H6.21 L5.27,2 H2 v2 h2 l3.6,7.59 -1.35,2.45 C6.52,14.37 6,15.11 6,16 c0,1.1 0.9,2 2,2 h12 v-2 H8.53 c-0.09,0 -0.17,-0.04 -0.22,-0.11 L7.16,14 z M7,18 c-1.1,0 -1.99,0.9 -1.99,2 S5.9,22 7,22 s2,-0.9 2,-2 -0.9,-2 -2,-2 z M17,18 c-1.1,0 -1.99,0.9 -1.99,2 S15.9,22 17,22 s2,-0.9 2,-2 -0.9,-2 -2,-2 z" />
+</vector>
