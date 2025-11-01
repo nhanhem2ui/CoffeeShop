@@ -109,6 +109,7 @@ public class LoginActivity extends AppCompatActivity {
             // Save user session
             SessionManager.getInstance().setUserId(user.getId());
             SessionManager.getInstance().setUserName(user.getFullName());
+            SessionManager.getInstance().setUserRole(user.getRole());
 
             Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(LoginActivity.this, ProductListActivity.class));

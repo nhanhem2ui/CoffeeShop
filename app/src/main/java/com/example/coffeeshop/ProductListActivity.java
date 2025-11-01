@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
@@ -34,6 +35,7 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
     private EditText etSearch;
     private FloatingActionButton fabAddProduct;
     private boolean isAscending = true;
+    private boolean isAdmin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,7 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
         setContentView(R.layout.activity_product_list);
 
         databaseHelper = new DatabaseHelper(this);
+        isAdmin = SessionManager.getInstance().isAdmin();
 
         setupToolbar();
         initViews();
@@ -64,12 +67,17 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         productList = new ArrayList<>();
         filteredList = new ArrayList<>();
-        adapter = new ProductAdapter(this, filteredList, this);
+        adapter = new ProductAdapter(this, filteredList, this, isAdmin);
         recyclerView.setAdapter(adapter);
 
-        fabAddProduct.setOnClickListener(v -> {
-            startActivity(new Intent(ProductListActivity.this, AddEditProductActivity.class));
-        });
+        if (isAdmin) {
+            fabAddProduct.setVisibility(View.VISIBLE);
+            fabAddProduct.setOnClickListener(v -> {
+                startActivity(new Intent(ProductListActivity.this, AddEditProductActivity.class));
+            });
+        } else {
+            fabAddProduct.setVisibility(View.GONE);
+        }
     }
 
     private void loadProducts() {
@@ -126,6 +134,10 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_product_list, menu);
+        MenuItem revenueItem = menu.findItem(R.id.action_revenue);
+        if (!isAdmin) {
+            revenueItem.setVisible(false);
+        }
         return true;
     }
 
@@ -139,7 +151,9 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
             startActivity(new Intent(this, CartActivity.class));
             return true;
         } else if (id == R.id.action_revenue) {
-            startActivity(new Intent(this, RevenueActivity.class));
+            if (isAdmin) {
+                startActivity(new Intent(this, RevenueActivity.class));
+            }
             return true;
         } else if (id == R.id.action_logout) {
             logout();
@@ -163,6 +177,7 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
 
     @Override
     public void onEditClick(Product product) {
+        if (!isAdmin) return;
         Intent intent = new Intent(this, AddEditProductActivity.class);
         intent.putExtra("product", product);
         startActivity(intent);
@@ -170,6 +185,7 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
 
     @Override
     public void onDeleteClick(Product product) {
+        if (!isAdmin) return;
         new AlertDialog.Builder(this)
                 .setTitle("Delete Product")
                 .setMessage("Are you sure you want to delete " + product.getName() + "?")

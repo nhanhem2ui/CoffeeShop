@@ -19,6 +19,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     private Context context;
     private List<Product> productList;
     private OnProductClickListener listener;
+    private boolean isAdmin;
 
     public interface OnProductClickListener {
         void onProductClick(Product product);
@@ -27,10 +28,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         void onAddToCartClick(Product product);
     }
 
-    public ProductAdapter(Context context, List<Product> productList, OnProductClickListener listener) {
+    public ProductAdapter(Context context, List<Product> productList, OnProductClickListener listener, boolean isAdmin) {
         this.context = context;
         this.productList = productList;
         this.listener = listener;
+        this.isAdmin = isAdmin;
     }
 
     @NonNull
@@ -50,6 +52,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         // Set image based on product name/imageUrl
         int imageResource = getImageResource(product.getImageUrl());
         holder.ivProduct.setImageResource(imageResource);
+
+        if (isAdmin) {
+            holder.btnEdit.setVisibility(View.VISIBLE);
+            holder.btnDelete.setVisibility(View.VISIBLE);
+            holder.btnAddToCart.setVisibility(View.GONE);
+        } else {
+            holder.btnEdit.setVisibility(View.GONE);
+            holder.btnDelete.setVisibility(View.GONE);
+            holder.btnAddToCart.setVisibility(View.VISIBLE);
+        }
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
@@ -88,7 +100,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     private int getImageResource(String imageName) {
         // Map image names to drawable resources
-        // You'll need to add coffee images to res/drawable
         switch (imageName != null ? imageName.toLowerCase() : "") {
             case "espresso":
                 return R.drawable.espresso;

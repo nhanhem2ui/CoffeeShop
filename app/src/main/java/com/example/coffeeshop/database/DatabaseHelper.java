@@ -23,6 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COL_USER_NAME = "full_name";
     private static final String COL_USER_EMAIL = "email";
     private static final String COL_USER_PASSWORD = "password";
+    private static final String COL_USER_ROLE = "role";
 
     // Products Table
     private static final String TABLE_PRODUCTS = "products";
@@ -57,7 +58,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COL_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COL_USER_NAME + " TEXT NOT NULL, " +
                 COL_USER_EMAIL + " TEXT UNIQUE NOT NULL, " +
-                COL_USER_PASSWORD + " TEXT NOT NULL)";
+                COL_USER_PASSWORD + " TEXT NOT NULL, " +
+                COL_USER_ROLE + " TEXT NOT NULL DEFAULT 'customer')";
 
         // Create Products Table
         String createProductsTable = "CREATE TABLE " + TABLE_PRODUCTS + " (" +
@@ -90,6 +92,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(createOrdersTable);
 
         insertSampleProducts(db);
+        insertAdminUser(db);
     }
 
     @Override
@@ -123,6 +126,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    private void insertAdminUser(SQLiteDatabase db) {
+        ContentValues adminValues = new ContentValues();
+        adminValues.put(COL_USER_NAME, "Admin User");
+        adminValues.put(COL_USER_EMAIL, "admin@coffeeshop.com");
+        adminValues.put(COL_USER_PASSWORD, "admin123"); //  Replace with a hashed password in a real app
+        adminValues.put(COL_USER_ROLE, "admin");
+        db.insert(TABLE_USERS, null, adminValues);
+    }
+
     // ========== USER OPERATIONS ==========
 
     public boolean registerUser(String name, String email, String password) {
@@ -148,7 +160,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     cursor.getInt(cursor.getColumnIndexOrThrow(COL_USER_ID)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COL_USER_NAME)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COL_USER_EMAIL)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COL_USER_PASSWORD))
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_USER_PASSWORD)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_USER_ROLE))
             );
         }
         cursor.close();

@@ -1,15 +1,18 @@
 package com.example.coffeeshop;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.example.coffeeshop.database.DatabaseHelper;
+import com.example.coffeeshop.utils.SessionManager;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -27,6 +30,13 @@ public class RevenueActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_revenue);
+
+        if (!SessionManager.getInstance().isAdmin()) {
+            Toast.makeText(this, "Access Denied", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, ProductListActivity.class));
+            finish();
+            return;
+        }
 
         databaseHelper = new DatabaseHelper(this);
         calendar = Calendar.getInstance();

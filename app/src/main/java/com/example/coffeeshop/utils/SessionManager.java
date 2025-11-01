@@ -1,9 +1,10 @@
 package com.example.coffeeshop.utils;
 
 public class SessionManager {
-    private static SessionManager instance;
+    private static volatile SessionManager instance;
     private int userId;
     private String userName;
+    private String userRole;
 
     private SessionManager() {
         userId = -1;
@@ -11,7 +12,11 @@ public class SessionManager {
 
     public static SessionManager getInstance() {
         if (instance == null) {
-            instance = new SessionManager();
+            synchronized (SessionManager.class) {
+                if (instance == null) {
+                    instance = new SessionManager();
+                }
+            }
         }
         return instance;
     }
@@ -32,6 +37,14 @@ public class SessionManager {
         this.userName = userName;
     }
 
+    public String getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(String userRole) {
+        this.userRole = userRole;
+    }
+
     public boolean isLoggedIn() {
         return userId != -1;
     }
@@ -39,5 +52,10 @@ public class SessionManager {
     public void logout() {
         userId = -1;
         userName = null;
+        userRole = null;
+    }
+
+    public boolean isAdmin() {
+        return "admin".equals(userRole);
     }
 }

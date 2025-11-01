@@ -1,5 +1,6 @@
 package com.example.coffeeshop;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.example.coffeeshop.database.DatabaseHelper;
 import com.example.coffeeshop.models.Product;
+import com.example.coffeeshop.utils.SessionManager;
 
 public class AddEditProductActivity extends AppCompatActivity {
 
@@ -25,9 +27,15 @@ public class AddEditProductActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_product);
 
+        if (!SessionManager.getInstance().isAdmin()) {
+            Toast.makeText(this, "Access Denied", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, ProductListActivity.class));
+            finish();
+            return;
+        }
+
         databaseHelper = new DatabaseHelper(this);
 
-        // Check if editing existing product
         if (getIntent().hasExtra("product")) {
             productToEdit = (Product) getIntent().getSerializableExtra("product");
             isEditMode = true;
@@ -84,7 +92,6 @@ public class AddEditProductActivity extends AppCompatActivity {
         String priceStr = etPrice.getText().toString().trim();
         String imageUrl = etImageUrl.getText().toString().trim();
 
-        // Validation
         if (TextUtils.isEmpty(name)) {
             etName.setError("Product name is required");
             etName.requestFocus();
@@ -118,7 +125,7 @@ public class AddEditProductActivity extends AppCompatActivity {
         }
 
         if (TextUtils.isEmpty(imageUrl)) {
-            imageUrl = "coffee_default";
+            imageUrl = "coffee_default"; // Default image if none provided
         }
 
         boolean success;
@@ -135,7 +142,7 @@ public class AddEditProductActivity extends AppCompatActivity {
 
         if (success) {
             Toast.makeText(this, isEditMode ? "Product updated" : "Product added", Toast.LENGTH_SHORT).show();
-            finish();
+            finish(); // Go back to product list
         } else {
             Toast.makeText(this, "Operation failed", Toast.LENGTH_SHORT).show();
         }
