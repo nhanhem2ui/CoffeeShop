@@ -59,6 +59,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         cartItems = new ArrayList<>();
         adapter = new CartAdapter(this, cartItems, this);
+        //caches item views by ID
+        adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
 
         btnCheckout.setOnClickListener(v -> checkout());
@@ -95,14 +97,11 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
     @Override
     public void onQuantityChanged(CartItem item, int newQuantity) {
+        // Update database first
         boolean success = databaseHelper.updateCartItemQuantity(item.getCartId(), newQuantity);
         if (success) {
-            int position = cartItems.indexOf(item);
-            if (position != -1) {
-                item.setQuantity(newQuantity);
-                adapter.notifyItemChanged(position);
-                updateTotal();
-            }
+            // Reload the entire cart to ensure data consistency
+            loadCartItems();
         } else {
             Toast.makeText(this, "Failed to update quantity", Toast.LENGTH_SHORT).show();
         }
@@ -116,13 +115,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
                 .setPositiveButton("Remove", (dialog, which) -> {
                     boolean success = databaseHelper.removeFromCart(item.getCartId());
                     if (success) {
-                        int position = cartItems.indexOf(item);
-                        if (position != -1) {
-                            cartItems.remove(position);
-                            adapter.notifyItemRemoved(position);
-                            updateTotal();
-                            updateEmptyState();
-                        }
+                        // Reload the entire cart to ensure data consistency
+                        loadCartItems();
                         Toast.makeText(CartActivity.this, "Item removed", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(CartActivity.this, "Failed to remove item", Toast.LENGTH_SHORT).show();
@@ -133,7 +127,11 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     }
 
     private void checkout() {
-        double total = cartItems.stream().mapToDouble(CartItem::getSubtotal).sum();
+        double totalAmount = 0;
+        for (CartItem item : cartItems) {
+            totalAmount += item.getSubtotal();
+        }
+        final double total = totalAmount; // Make it final for lambda
 
         new AlertDialog.Builder(this)
                 .setTitle("Checkout")
@@ -145,16 +143,20 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
                     if (orderCreated && cartCleared) {
                         Toast.makeText(this, "Order placed successfully!", Toast.LENGTH_LONG).show();
-                        cartItems.clear();
-                        adapter.notifyDataSetChanged();
-                        updateTotal();
-                        updateEmptyState();
+                        loadCartItems(); // Reload to show empty cart
                     } else {
                         Toast.makeText(this, "Failed to complete order", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Reload cart items when returning to this activity
+        loadCartItems();
     }
 
     @Override

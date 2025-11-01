@@ -50,21 +50,35 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         int imageResource = getImageResource(item.getProduct().getImageUrl());
         holder.ivProduct.setImageResource(imageResource);
 
+        // Remove any existing click listeners to prevent stale references
+        holder.btnIncrease.setOnClickListener(null);
+        holder.btnDecrease.setOnClickListener(null);
+        holder.btnRemove.setOnClickListener(null);
+
+        // Set new click listeners
         holder.btnIncrease.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onQuantityChanged(item, item.getQuantity() + 1);
+            int currentPosition = holder.getAdapterPosition();
+            if (currentPosition != RecyclerView.NO_POSITION && listener != null) {
+                CartItem currentItem = cartItems.get(currentPosition);
+                listener.onQuantityChanged(currentItem, currentItem.getQuantity() + 1);
             }
         });
 
         holder.btnDecrease.setOnClickListener(v -> {
-            if (listener != null && item.getQuantity() > 1) {
-                listener.onQuantityChanged(item, item.getQuantity() - 1);
+            int currentPosition = holder.getAdapterPosition();
+            if (currentPosition != RecyclerView.NO_POSITION && listener != null) {
+                CartItem currentItem = cartItems.get(currentPosition);
+                if (currentItem.getQuantity() > 1) {
+                    listener.onQuantityChanged(currentItem, currentItem.getQuantity() - 1);
+                }
             }
         });
 
         holder.btnRemove.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onRemoveClick(item);
+            int currentPosition = holder.getAdapterPosition();
+            if (currentPosition != RecyclerView.NO_POSITION && listener != null) {
+                CartItem currentItem = cartItems.get(currentPosition);
+                listener.onRemoveClick(currentItem);
             }
         });
     }
@@ -72,6 +86,19 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     @Override
     public int getItemCount() {
         return cartItems.size();
+    }
+
+    @Override
+    //Keep stable IDs but generate unique ones
+    public long getItemId(int position) {
+        return cartItems.get(position).getCartId() != 0
+                ? cartItems.get(position).getCartId()
+                : cartItems.get(position).hashCode();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 
     private int getImageResource(String imageName) {
