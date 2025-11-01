@@ -74,11 +74,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         return cartItems.size();
     }
 
-    public void updateList(List<CartItem> newList) {
-        this.cartItems = newList;
-        notifyDataSetChanged();
-    }
-
     private int getImageResource(String imageName) {
         switch (imageName != null ? imageName.toLowerCase() : "") {
             case "espresso":

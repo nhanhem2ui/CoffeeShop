@@ -66,8 +66,9 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
     private void loadCartItems() {
         int userId = SessionManager.getInstance().getUserId();
-        cartItems = databaseHelper.getCartItems(userId);
-        adapter.updateList(cartItems);
+        cartItems.clear();
+        cartItems.addAll(databaseHelper.getCartItems(userId));
+        adapter.notifyDataSetChanged();
         updateTotal();
         updateEmptyState();
     }
@@ -96,7 +97,12 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     public void onQuantityChanged(CartItem item, int newQuantity) {
         boolean success = databaseHelper.updateCartItemQuantity(item.getCartId(), newQuantity);
         if (success) {
-            loadCartItems();
+            int position = cartItems.indexOf(item);
+            if (position != -1) {
+                item.setQuantity(newQuantity);
+                adapter.notifyItemChanged(position);
+                updateTotal();
+            }
         } else {
             Toast.makeText(this, "Failed to update quantity", Toast.LENGTH_SHORT).show();
         }
@@ -110,8 +116,14 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
                 .setPositiveButton("Remove", (dialog, which) -> {
                     boolean success = databaseHelper.removeFromCart(item.getCartId());
                     if (success) {
+                        int position = cartItems.indexOf(item);
+                        if (position != -1) {
+                            cartItems.remove(position);
+                            adapter.notifyItemRemoved(position);
+                            updateTotal();
+                            updateEmptyState();
+                        }
                         Toast.makeText(CartActivity.this, "Item removed", Toast.LENGTH_SHORT).show();
-                        loadCartItems();
                     } else {
                         Toast.makeText(CartActivity.this, "Failed to remove item", Toast.LENGTH_SHORT).show();
                     }
@@ -121,11 +133,6 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     }
 
     private void checkout() {
-
-//        double total = 0;
-//        for (CartItem item : cartItems) {
-//            total += item.getSubtotal();
-//        }
         double total = cartItems.stream().mapToDouble(CartItem::getSubtotal).sum();
 
         new AlertDialog.Builder(this)
@@ -138,7 +145,10 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
                     if (orderCreated && cartCleared) {
                         Toast.makeText(this, "Order placed successfully!", Toast.LENGTH_LONG).show();
-                        loadCartItems();
+                        cartItems.clear();
+                        adapter.notifyDataSetChanged();
+                        updateTotal();
+                        updateEmptyState();
                     } else {
                         Toast.makeText(this, "Failed to complete order", Toast.LENGTH_SHORT).show();
                     }
