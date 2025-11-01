@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--basic-->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="gray">#E5353535</color>
+    <color name="primary">#6F4E37</color>
+    <color name="primaryDark">#5D4029</color>
+    <color name="accent">#D4A574</color>
+    <color name="textPrimary">#212121</color>
+    <color name="textSecondary">#757575</color>
+
+    <!--system-->
+    <color name="background">#E0D8C3</color>
+    <color name="button">#A0522D</color>
+
+    <!--alternate-->
+    <color name="WarmCream">#F5F0E1</color>
+    <color name="LightTaupe">#E0D8C3</color>
+    <color name="MutedPastelYellow">#FFF8DC</color>
+    <color name="Terracotta">#A0522D</color>
+    <color name="DeepBlue">#1E3A8A</color>
+    <color name="EarthyGreen">#4CAF50</color>
+
+</resources>

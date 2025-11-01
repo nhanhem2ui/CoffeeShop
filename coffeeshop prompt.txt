@@ -1,0 +1,686 @@
+coffeeshop prompt
+# Coffee Shop Mobile Application - Complete Project Documentation
+
+## 📱 Project Overview
+
+**Project Name:** Coffee Shop Mobile Application  
+**Platform:** Android  
+**Programming Language:** Java  
+**Minimum SDK:** API 28 (Android 9.0 Pie)  
+**Target SDK:** API 28+  
+**Architecture:** MVC (Model-View-Controller)  
+**Database:** SQLite (Local Storage)
+
+## 🎯 Project Purpose
+
+A comprehensive mobile application that allows customers to order coffee and other beverages at their table in a coffee shop. The application provides complete product management, user authentication, shopping cart functionality, and revenue tracking for the business owner.
+
+## 🗃️ Database Architecture
+
+### **Database Type:** SQLite
+**Database Name:** `CoffeeShop.db`  
+**Database Version:** 1
+
+### Database Tables:
+
+#### 1. **Users Table**
+Stores registered user information.
+```sql
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    full_name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL
+)
+```
+
+**Columns:**
+- `id` - Unique user identifier
+- `full_name` - User's full name
+- `email` - User's email (unique, used for login)
+- `password` - User's password (plain text for educational purposes)
+
+#### 2. **Products Table**
+Stores coffee and beverage product information.
+```sql
+CREATE TABLE products (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT,
+    price REAL NOT NULL,
+    image_url TEXT
+)
+```
+
+**Columns:**
+- `id` - Unique product identifier
+- `name` - Product name (e.g., "Espresso", "Cappuccino")
+- `description` - Brief product description
+- `price` - Product price in dollars
+- `image_url` - Image resource name
+
+**Pre-loaded Sample Data:**
+- Espresso - $2.99
+- Cappuccino - $4.49
+- Latte - $4.99
+- Americano - $3.49
+- Mocha - $5.49
+- Macchiato - $3.99
+- Cold Brew - $4.99
+- Flat White - $4.79
+
+#### 3. **Cart Table**
+Stores current shopping cart items for each user.
+```sql
+CREATE TABLE cart (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    product_id INTEGER NOT NULL,
+    quantity INTEGER NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES users(id),
+    FOREIGN KEY(product_id) REFERENCES products(id)
+)
+```
+
+**Columns:**
+- `id` - Unique cart item identifier
+- `user_id` - Foreign key to users table
+- `product_id` - Foreign key to products table
+- `quantity` - Number of items
+
+#### 4. **Orders Table**
+Stores completed order transactions for revenue tracking.
+```sql
+CREATE TABLE orders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    total_amount REAL NOT NULL,
+    order_date TEXT NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+)
+```
+
+**Columns:**
+- `id` - Unique order identifier
+- `user_id` - Foreign key to users table
+- `total_amount` - Total order amount
+- `order_date` - Timestamp of order (format: "yyyy-MM-dd HH:mm:ss")
+
+## 📦 Data Models
+
+### 1. **User Model** (`User.java`)
+Represents a registered user in the system.
+
+**Properties:**
+- `int id` - User ID
+- `String fullName` - User's full name
+- `String email` - User's email address
+- `String password` - User's password
+
+**Constructors:**
+- `User(int id, String fullName, String email, String password)`
+- `User(String fullName, String email, String password)` - For new users
+
+### 2. **Product Model** (`Product.java`)
+Represents a coffee/beverage product.
+
+**Properties:**
+- `int id` - Product ID
+- `String name` - Product name
+- `String description` - Product description
+- `double price` - Product price
+- `String imageUrl` - Image resource name
+
+**Implements:** `Serializable` (for passing between activities)
+
+**Constructors:**
+- `Product(int id, String name, String description, double price, String imageUrl)`
+- `Product(String name, String description, double price, String imageUrl)` - For new products
+
+### 3. **CartItem Model** (`CartItem.java`)
+Represents an item in the shopping cart.
+
+**Properties:**
+- `int cartId` - Cart item ID
+- `Product product` - The product object
+- `int quantity` - Quantity of the product
+
+**Methods:**
+- `double getSubtotal()` - Calculates subtotal (price × quantity)
+
+**Constructor:**
+- `CartItem(int cartId, Product product, int quantity)`
+
+## 🏗️ Activities & Views
+
+### 1. **MainActivity**
+**Purpose:** Splash screen and entry point  
+**Layout:** `activity_main.xml`
+
+**Functionality:**
+- Displays app logo and branding for 2 seconds
+- Checks user session using SessionManager
+- Redirects to ProductListActivity if logged in
+- Redirects to LoginActivity if not logged in
+
+**UI Components:**
+- App logo (ImageView)
+- App name and tagline (TextViews)
+- Loading progress bar
+- Version number
+
+---
+
+### 2. **RegisterActivity**
+**Purpose:** User registration  
+**Layout:** `activity_register.xml`
+
+**Functionality:**
+- User registration form with validation
+- Email format validation
+- Password matching confirmation
+- Duplicate email checking
+- Stores user data in SQLite database
+
+**UI Components:**
+- Full Name input (EditText)
+- Email input (EditText)
+- Password input (EditText with password toggle)
+- Confirm Password input (EditText with password toggle)
+- Register button
+- "Already have account? Login" link
+
+**Validation Rules:**
+- Full name is required
+- Valid email format
+- Password minimum 6 characters
+- Password and Confirm Password must match
+- Email must not already exist
+
+---
+
+### 3. **LoginActivity**
+**Purpose:** User authentication  
+**Layout:** `activity_login.xml`
+
+**Functionality:**
+- User login with email and password
+- Remember password feature using SharedPreferences
+- Session creation on successful login
+- Credential validation against database
+
+**UI Components:**
+- Email input (EditText)
+- Password input (EditText with password toggle)
+- Remember Password checkbox
+- Login button
+- "Don't have account? Register" link
+
+**Features:**
+- Auto-fills saved credentials if "Remember Password" was checked
+- Stores user ID and name in SessionManager
+- Navigates to ProductListActivity on success
+
+---
+
+### 4. **ProductListActivity**
+**Purpose:** Main product browsing and management screen  
+**Layout:** `activity_product_list.xml`  
+**Adapter:** `ProductAdapter.java`  
+**Item Layout:** `item_product.xml`
+
+**Functionality:**
+- Displays all products in RecyclerView
+- Real-time search by product name
+- Sort products by price (ascending/descending)
+- Add products to cart
+- Edit product details
+- Delete products with confirmation
+- View product details
+- Navigate to cart, revenue, or logout
+
+**UI Components:**
+- Toolbar with app title
+- Search bar (EditText)
+- RecyclerView for product list
+- Floating Action Button (FAB) to add new products
+- Options menu (Sort, Cart, Revenue, Logout)
+
+**Each Product Item Shows:**
+- Product image
+- Product name
+- Product description (truncated)
+- Product price
+- Edit button
+- Delete button
+- Add to Cart button
+
+**Menu Options:**
+- Sort by Price (toggle ascending/descending)
+- Cart (navigate to shopping cart)
+- Revenue (view statistics)
+- Logout (clear session and return to login)
+
+---
+
+### 5. **AddEditProductActivity**
+**Purpose:** Create new products or edit existing ones  
+**Layout:** `activity_add_edit_product.xml`
+
+**Functionality:**
+- Add new product to database
+- Update existing product information
+- Input validation
+- Supports product images via image name/URL
+
+**UI Components:**
+- Product Name input (EditText)
+- Description input (EditText - multiline)
+- Price input (EditText - number decimal)
+- Image URL/Name input (EditText)
+- Save Product button
+- Back navigation in toolbar
+
+**Modes:**
+- **Add Mode:** Empty form for new product
+- **Edit Mode:** Pre-filled form with existing product data
+
+**Validation Rules:**
+- Product name is required
+- Description is required
+- Price is required and must be > 0
+- Valid number format for price
+- Image name defaults to "coffee_default" if empty
+
+---
+
+### 6. **ProductDetailActivity**
+**Purpose:** View full product information  
+**Layout:** `activity_product_detail.xml`
+
+**Functionality:**
+- Displays complete product details
+- Large product image
+- Add product to cart from detail view
+
+**UI Components:**
+- Large product image (300dp height)
+- Product name (large, bold)
+- Product price (prominent display)
+- Description section with full text
+- Add to Cart button
+- Back navigation in toolbar
+
+**Features:**
+- Receives product data via Intent Serializable
+- Displays product in expanded format
+- Allows direct cart addition
+
+---
+
+### 7. **CartActivity**
+**Purpose:** Shopping cart management and checkout  
+**Layout:** `activity_cart.xml`  
+**Adapter:** `CartAdapter.java`  
+**Item Layout:** `item_cart.xml`
+
+**Functionality:**
+- Display all cart items for current user
+- Adjust item quantities (increase/decrease)
+- Remove items from cart
+- Calculate and display total amount
+- Complete checkout process
+- Clear cart after successful order
+
+**UI Components:**
+- RecyclerView for cart items
+- Total amount display
+- Checkout button
+- Empty cart message (when cart is empty)
+- Back navigation in toolbar
+
+**Each Cart Item Shows:**
+- Product image
+- Product name
+- Product price
+- Quantity controls (- / + buttons)
+- Current quantity
+- Subtotal for item
+- Remove button
+
+**Checkout Process:**
+- Shows confirmation dialog with total
+- Creates order record in database
+- Clears user's cart
+- Shows success message
+
+---
+
+### 8. **RevenueActivity**
+**Purpose:** Business revenue statistics and analytics  
+**Layout:** `activity_revenue.xml`
+
+**Functionality:**
+- Display total revenue from all orders
+- Filter revenue by date, month, or year
+- Date picker for specific period selection
+- Real-time revenue calculations
+
+**UI Components:**
+- Total Revenue card (prominent display)
+- Filter options (RadioGroup):
+  - By Day
+  - By Month
+  - By Year
+- Select Date button
+- Filtered revenue display
+- Date/period label
+- Back navigation in toolbar
+
+**Features:**
+- Total revenue always visible
+- Select filter type (day/month/year)
+- Pick specific date using DatePickerDialog
+- Calculates revenue for selected period
+- Updates display dynamically
+
+**Revenue Calculations:**
+- **Total:** Sum of all orders ever placed
+- **By Day:** Sum of orders on specific date
+- **By Month:** Sum of orders in specific month/year
+- **By Year:** Sum of orders in specific year
+
+---
+
+## 🔧 Supporting Components
+
+### **SessionManager** (`SessionManager.java`)
+Singleton class for managing user session.
+
+**Properties:**
+- `int userId` - Current logged-in user ID
+- `String userName` - Current user's name
+
+**Methods:**
+- `getInstance()` - Get singleton instance
+- `getUserId()` - Get current user ID
+- `setUserId(int)` - Set user ID
+- `getUserName()` - Get user name
+- `setUserName(String)` - Set user name
+- `isLoggedIn()` - Check if user is logged in
+- `logout()` - Clear session data
+
+### **DatabaseHelper** (`DatabaseHelper.java`)
+Extends SQLiteOpenHelper for database operations.
+
+**Key Methods:**
+
+**User Operations:**
+- `registerUser(name, email, password)` - Create new user
+- `loginUser(email, password)` - Authenticate user
+- `isEmailExists(email)` - Check email availability
+
+**Product Operations:**
+- `getAllProducts()` - Get all products
+- `getProductById(id)` - Get specific product
+- `addProduct(Product)` - Create new product
+- `updateProduct(Product)` - Update existing product
+- `deleteProduct(id)` - Delete product
+- `searchProducts(query)` - Search by name
+
+**Cart Operations:**
+- `addToCart(userId, productId, quantity)` - Add/update cart item
+- `getCartItems(userId)` - Get user's cart
+- `updateCartItemQuantity(cartId, quantity)` - Update quantity
+- `removeFromCart(cartId)` - Remove cart item
+- `clearCart(userId)` - Empty user's cart
+
+**Order Operations:**
+- `createOrder(userId, totalAmount)` - Create order record
+- `getTotalRevenue()` - Get all-time revenue
+- `getRevenueByDate(date)` - Get daily revenue
+- `getRevenueByMonth(year, month)` - Get monthly revenue
+- `getRevenueByYear(year)` - Get yearly revenue
+
+### **ProductAdapter** (`ProductAdapter.java`)
+RecyclerView adapter for product list.
+
+**Interface:** `OnProductClickListener`
+- `onProductClick(Product)` - View details
+- `onEditClick(Product)` - Edit product
+- `onDeleteClick(Product)` - Delete product
+- `onAddToCartClick(Product)` - Add to cart
+
+**Features:**
+- Binds product data to views
+- Handles image resource mapping
+- Manages click listeners for all buttons
+
+### **CartAdapter** (`CartAdapter.java`)
+RecyclerView adapter for cart items.
+
+**Interface:** `OnCartItemListener`
+- `onQuantityChanged(CartItem, newQuantity)` - Update quantity
+- `onRemoveClick(CartItem)` - Remove item
+
+**Features:**
+- Displays cart items with quantities
+- Calculates subtotals
+- Handles quantity increase/decrease
+- Manages item removal
+
+---
+
+## 🎨 UI Design Specifications
+
+### Color Scheme:
+- **Primary:** #6F4E37 (Coffee Brown)
+- **Primary Dark:** #5D4029 (Dark Brown)
+- **Accent:** #D4A574 (Cream/Tan)
+- **Background:** #F5F5F5 (Light Gray)
+- **Text Primary:** #212121 (Dark Gray)
+- **Text Secondary:** #757575 (Medium Gray)
+
+### Design Pattern:
+- Material Design Components
+- Card-based layouts for list items
+- Floating Action Button for primary actions
+- Text Input Layouts with outlined boxes
+- Toolbar for navigation
+- Bottom sheet style for totals
+
+### Typography:
+- Headers: 28-32sp, bold
+- Subheaders: 18-20sp, bold
+- Body: 16sp, regular
+- Captions: 14sp, regular
+- Prices: Bold, primary color
+
+---
+
+## 🔐 Security & Data Handling
+
+### Password Storage:
+- **Current:** Plain text (educational project)
+- **Production Recommendation:** Use password hashing (BCrypt, Argon2)
+
+### Session Management:
+- In-memory session via SessionManager
+- SharedPreferences for "Remember Password" feature
+- Session cleared on logout
+
+### Data Validation:
+- Email format validation using Android Patterns
+- Input field validation (required fields, lengths)
+- Price validation (positive numbers only)
+- Confirmation dialogs for destructive actions
+
+---
+
+## 📊 Application Flow
+
+```
+[MainActivity - Splash]
+        ↓
+  Check Session?
+    ↙         ↘
+  Yes          No
+   ↓            ↓
+[ProductList] [Login] ←→ [Register]
+   ↓
+   ├→ [Add/Edit Product]
+   ├→ [Product Detail] → Add to Cart
+   ├→ [Cart] → Checkout → [Orders]
+   └→ [Revenue Statistics]
+```
+
+---
+
+## ✨ Key Features Summary
+
+1. **User Management:**
+   - Registration with validation
+   - Login with remember password
+   - Session management
+
+2. **Product Management:**
+   - View all products
+   - CRUD operations (Create, Read, Update, Delete)
+   - Real-time search
+   - Sort by price (ascending/descending)
+   - Product details view
+
+3. **Shopping Cart:**
+   - Add products to cart
+   - Adjust quantities
+   - Remove items
+   - View total
+   - Checkout process
+
+4. **Revenue Tracking:**
+   - Total revenue display
+   - Filter by day/month/year
+   - Date picker for specific periods
+   - Real-time calculations
+
+5. **UI/UX:**
+   - Material Design
+   - Responsive layouts
+   - Loading states
+   - Empty states
+   - Confirmation dialogs
+   - Success/error messages
+   - Navigation drawer/menu
+
+---
+
+## 📱 Technical Requirements
+
+- **Minimum SDK:** API 28 (Android 9.0 Pie)
+- **Language:** Java
+- **Database:** SQLite
+- **UI Framework:** Material Components
+- **RecyclerView:** For efficient list displays
+- **Navigation:** Intent-based with back stack management
+
+---
+
+## 🚀 Future Enhancements (Optional)
+
+- User profile management
+- Order history for customers
+- Product categories
+- Image upload from gallery/camera
+- Push notifications
+- Multiple payment methods
+- User ratings and reviews
+- Favorites/wishlist
+- Promotional codes/discounts
+- Export revenue reports (PDF/CSV)
+- Admin dashboard
+- Multi-language support
+
+---
+
+## 📝 Testing Checklist
+
+- [ ] User registration with valid/invalid data
+- [ ] Login with correct/incorrect credentials
+- [ ] Remember password functionality
+- [ ] Product CRUD operations
+- [ ] Search functionality
+- [ ] Sort functionality
+- [ ] Add to cart
+- [ ] Cart quantity management
+- [ ] Remove from cart
+- [ ] Checkout process
+- [ ] Revenue calculations
+- [ ] Date filtering
+- [ ] Session persistence
+- [ ] Logout functionality
+- [ ] Back navigation
+- [ ] Empty states
+- [ ] Error handling
+
+---
+
+## 📄 Project Structure
+
+```
+CoffeeShop/
+├── app/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/com/example/coffeeshop/
+│   │   │   │   ├── MainActivity.java
+│   │   │   │   ├── LoginActivity.java
+│   │   │   │   ├── RegisterActivity.java
+│   │   │   │   ├── ProductListActivity.java
+│   │   │   │   ├── AddEditProductActivity.java
+│   │   │   │   ├── ProductDetailActivity.java
+│   │   │   │   ├── CartActivity.java
+│   │   │   │   ├── RevenueActivity.java
+│   │   │   │   ├── SessionManager.java
+│   │   │   │   ├── models/
+│   │   │   │   │   ├── User.java
+│   │   │   │   │   ├── Product.java
+│   │   │   │   │   └── CartItem.java
+│   │   │   │   ├── database/
+│   │   │   │   │   └── DatabaseHelper.java
+│   │   │   │   └── adapters/
+│   │   │   │       ├── ProductAdapter.java
+│   │   │   │       └── CartAdapter.java
+│   │   │   ├── res/
+│   │   │   │   ├── layout/
+│   │   │   │   ├── drawable/
+│   │   │   │   ├── values/
+│   │   │   │   └── menu/
+│   │   │   └── AndroidManifest.xml
+│   └── build.gradle
+└── build.gradle
+```
+
+---
+
+## 📖 Usage Guide
+
+### For Customers:
+1. Register a new account
+2. Browse available products
+3. Search for specific items
+4. View product details
+5. Add items to cart
+6. Adjust quantities in cart
+7. Complete checkout
+
+### For Administrators:
+1. Login with admin account
+2. Add new products
+3. Update product information
+4. Delete outdated products
+5. View revenue statistics
+6. Filter revenue by period
+
+---
+
+This documentation provides a complete overview of the Coffee Shop Mobile Application, including database structure, models, activities, and their corresponding views. The application is built using Java with SQLite database for local data persistence, following Android best practices and Material Design guidelines.
