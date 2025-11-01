@@ -130,7 +130,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues adminValues = new ContentValues();
         adminValues.put(COL_USER_NAME, "Admin User");
         adminValues.put(COL_USER_EMAIL, "admin@coffeeshop.com");
-        adminValues.put(COL_USER_PASSWORD, "admin123"); //  Replace with a hashed password in a real app
+        adminValues.put(COL_USER_PASSWORD, "123"); //  Replace with a hashed password in a real app
         adminValues.put(COL_USER_ROLE, "admin");
         db.insert(TABLE_USERS, null, adminValues);
     }
