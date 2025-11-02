@@ -61,19 +61,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loginUser();
-            }
-        });
+        btnLogin.setOnClickListener(v -> loginUser());
 
-        tvRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
-                finish();
-            }
+        tvRegister.setOnClickListener(v -> {
+            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+            finish();
         });
     }
 
@@ -107,9 +99,9 @@ public class LoginActivity extends AppCompatActivity {
             editor.apply();
 
             // Save user session
-            SessionManager.getInstance().setUserId(user.getId());
-            SessionManager.getInstance().setUserName(user.getFullName());
-            SessionManager.getInstance().setUserRole(user.getRole());
+            SessionManager.getInstance(LoginActivity.this).setUserId(user.getId());
+            SessionManager.getInstance(LoginActivity.this).setUserName(user.getFullName());
+            SessionManager.getInstance(LoginActivity.this).setUserRole(user.getRole());
 
             Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(LoginActivity.this, ProductListActivity.class));

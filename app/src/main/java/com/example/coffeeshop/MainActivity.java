@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         // Check if user is already logged in
         new Handler().postDelayed(() -> {
             // Check session
-            if (SessionManager.getInstance().isLoggedIn()) {
+            if (SessionManager.getInstance(MainActivity.this).isLoggedIn()) {
                 // User is logged in, go to product list
                 startActivity(new Intent(MainActivity.this, ProductListActivity.class));
             } else {
