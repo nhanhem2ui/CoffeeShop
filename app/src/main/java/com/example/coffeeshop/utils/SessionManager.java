@@ -1,6 +1,8 @@
 package com.example.coffeeshop.utils;
 
 public class SessionManager {
+
+    //multiple threads access
     private static volatile SessionManager instance;
     private int userId;
     private String userName;
@@ -11,7 +13,9 @@ public class SessionManager {
     }
 
     public static SessionManager getInstance() {
+        //already exists → no need to lock.
         if (instance == null) {
+            //locks
             synchronized (SessionManager.class) {
                 if (instance == null) {
                     instance = new SessionManager();
