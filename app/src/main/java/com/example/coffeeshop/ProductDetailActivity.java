@@ -9,10 +9,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import com.bumptech.glide.Glide;
 import com.example.coffeeshop.database.DatabaseHelper;
 import com.example.coffeeshop.models.Product;
 import com.example.coffeeshop.utils.SessionManager;
-
 import java.util.Locale;
 
 public class ProductDetailActivity extends AppCompatActivity {
@@ -48,7 +48,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void initViews() {  
+    private void initViews() {
         ivProduct = findViewById(R.id.iv_product_detail);
         tvName = findViewById(R.id.tv_product_name_detail);
         tvDescription = findViewById(R.id.tv_product_description_detail);
@@ -69,8 +69,21 @@ public class ProductDetailActivity extends AppCompatActivity {
             tvDescription.setText(product.getDescription());
             tvPrice.setText(String.format(Locale.getDefault(), "$%.2f", product.getPrice()));
 
-            int imageResource = getImageResource(product.getImageUrl());
-            ivProduct.setImageResource(imageResource);
+            // Load image - check if it's a URL or drawable resource
+            String imageUrl = product.getImageUrl();
+            if (imageUrl != null && (imageUrl.startsWith("http://") || imageUrl.startsWith("https://"))) {
+                // Load from URL (Cloudinary)
+                Glide.with(this)
+                        .load(imageUrl)
+                        .placeholder(R.drawable.coffee_default)
+                        .error(R.drawable.coffee_default)
+                        .centerCrop()
+                        .into(ivProduct);
+            } else {
+                // Load from drawable resources
+                int imageResource = getImageResource(imageUrl);
+                ivProduct.setImageResource(imageResource);
+            }
         }
     }
 

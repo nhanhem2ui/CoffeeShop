@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import com.example.coffeeshop.R;
 import com.example.coffeeshop.models.Product;
 import java.util.List;
@@ -49,9 +50,21 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.tvDescription.setText(product.getDescription());
         holder.tvPrice.setText(String.format(Locale.getDefault(), "$%.2f", product.getPrice()));
 
-        // Set image based on product name/imageUrl
-        int imageResource = getImageResource(product.getImageUrl());
-        holder.ivProduct.setImageResource(imageResource);
+        // Load image - check if it's a URL or drawable resource
+        String imageUrl = product.getImageUrl();
+        if (imageUrl != null && (imageUrl.startsWith("http://") || imageUrl.startsWith("https://"))) {
+            // Load from URL (Cloudinary)
+            Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.coffee_default)
+                    .error(R.drawable.coffee_default)
+                    .centerCrop()
+                    .into(holder.ivProduct);
+        } else {
+            // Load from drawable resources
+            int imageResource = getImageResource(imageUrl);
+            holder.ivProduct.setImageResource(imageResource);
+        }
 
         if (isAdmin) {
             holder.btnEdit.setVisibility(View.VISIBLE);
@@ -99,7 +112,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     }
 
     private int getImageResource(String imageName) {
-        // Map image names to drawable resources
         switch (imageName != null ? imageName.toLowerCase() : "") {
             case "espresso":
                 return R.drawable.espresso;

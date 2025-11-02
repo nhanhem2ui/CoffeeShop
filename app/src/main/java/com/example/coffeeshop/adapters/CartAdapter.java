@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import com.example.coffeeshop.R;
 import com.example.coffeeshop.models.CartItem;
 import java.util.List;
@@ -47,8 +48,21 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
         holder.tvSubtotal.setText(String.format(Locale.getDefault(), "$%.2f", item.getSubtotal()));
 
-        int imageResource = getImageResource(item.getProduct().getImageUrl());
-        holder.ivProduct.setImageResource(imageResource);
+        // Load image - check if it's a URL or drawable resource
+        String imageUrl = item.getProduct().getImageUrl();
+        if (imageUrl != null && (imageUrl.startsWith("http://") || imageUrl.startsWith("https://"))) {
+            // Load from URL (Cloudinary)
+            Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.coffee_default)
+                    .error(R.drawable.coffee_default)
+                    .centerCrop()
+                    .into(holder.ivProduct);
+        } else {
+            // Load from drawable resources
+            int imageResource = getImageResource(imageUrl);
+            holder.ivProduct.setImageResource(imageResource);
+        }
 
         // Remove any existing click listeners to prevent stale references
         holder.btnIncrease.setOnClickListener(null);
@@ -89,7 +103,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     }
 
     @Override
-    //Keep stable IDs but generate unique ones
     public long getItemId(int position) {
         return cartItems.get(position).getCartId() != 0
                 ? cartItems.get(position).getCartId()
