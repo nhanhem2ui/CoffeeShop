@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/primary"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
@@ -30,6 +31,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_product_name"
                     android:layout_width="match_parent"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
                     android:layout_height="wrap_content"
                     android:hint="Product Name"/>
             </com.google.android.material.textfield.TextInputLayout>
@@ -44,6 +47,8 @@
                     android:id="@+id/et_product_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
                     android:hint="Description"
                     android:minLines="3"
                     android:gravity="top"/>
@@ -58,6 +63,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_product_price"
                     android:layout_width="match_parent"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
                     android:layout_height="wrap_content"
                     android:hint="Price"
                     android:inputType="numberDecimal"/>
@@ -72,6 +79,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_product_image_url"
                     android:layout_width="match_parent"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
                     android:layout_height="wrap_content"
                     android:hint="Image Name (e.g., espresso)"/>
             </com.google.android.material.textfield.TextInputLayout>
@@ -80,6 +89,8 @@
                 android:id="@+id/btn_save_product"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:backgroundTint="@color/button"
+                android:textColor="@color/white"
                 android:text="Save Product"
                 android:textSize="16sp"/>
         </LinearLayout>

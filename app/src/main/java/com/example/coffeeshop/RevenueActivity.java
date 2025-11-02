@@ -24,7 +24,6 @@ public class RevenueActivity extends AppCompatActivity {
     private RadioGroup radioGroupFilter;
     private Button btnSelectDate;
     private Calendar calendar;
-    private SimpleDateFormat dateFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +39,6 @@ public class RevenueActivity extends AppCompatActivity {
 
         databaseHelper = new DatabaseHelper(this);
         calendar = Calendar.getInstance();
-        dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
         setupToolbar();
         initViews();
@@ -73,49 +71,119 @@ public class RevenueActivity extends AppCompatActivity {
     private void setupListeners() {
         radioGroupFilter.setOnCheckedChangeListener((group, checkedId) -> {
             btnSelectDate.setVisibility(View.VISIBLE);
-            tvFilteredRevenue.setVisibility(View.VISIBLE);
-            tvFilterLabel.setVisibility(View.VISIBLE);
+            tvFilteredRevenue.setVisibility(View.GONE);
+            tvFilterLabel.setVisibility(View.GONE);
+
+            // Update button text based on selection
+            if (checkedId == R.id.radio_day) {
+                btnSelectDate.setText("Select Day");
+            } else if (checkedId == R.id.radio_month) {
+                btnSelectDate.setText("Select Month");
+            } else if (checkedId == R.id.radio_year) {
+                btnSelectDate.setText("Select Year");
+            }
         });
 
         btnSelectDate.setOnClickListener(v -> showDatePicker());
     }
 
     private void showDatePicker() {
+        int selectedId = radioGroupFilter.getCheckedRadioButtonId();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                (view, selectedYear, selectedMonth, selectedDay) -> {
-                    calendar.set(selectedYear, selectedMonth, selectedDay);
-                    calculateFilteredRevenue();
-                }, year, month, day);
+        if (selectedId == R.id.radio_day) {
+            // Show full date picker for day selection
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        calendar.set(selectedYear, selectedMonth, selectedDay);
+                        calculateDayRevenue();
+                    }, year, month, day);
+            datePickerDialog.show();
 
-        datePickerDialog.show();
+        } else if (selectedId == R.id.radio_month) {
+            // Show month/year picker
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        calendar.set(Calendar.YEAR, selectedYear);
+                        calendar.set(Calendar.MONTH, selectedMonth);
+                        calculateMonthRevenue();
+                    }, year, month, day);
+
+            // Hide day picker
+            try {
+                datePickerDialog.getDatePicker().findViewById(
+                        getResources().getIdentifier("day", "id", "android")
+                ).setVisibility(View.GONE);
+            } catch (Exception e) {
+                // Fallback: just show the full picker
+            }
+
+            datePickerDialog.show();
+
+        } else if (selectedId == R.id.radio_year) {
+            // Show year picker only
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                    (view, selectedYear, selectedMonth, selectedDay) -> {
+                        calendar.set(Calendar.YEAR, selectedYear);
+                        calculateYearRevenue();
+                    }, year, month, day);
+
+            // Hide month and day picker
+            try {
+                datePickerDialog.getDatePicker().findViewById(
+                        getResources().getIdentifier("month", "id", "android")
+                ).setVisibility(View.GONE);
+                datePickerDialog.getDatePicker().findViewById(
+                        getResources().getIdentifier("day", "id", "android")
+                ).setVisibility(View.GONE);
+            } catch (Exception e) {
+                // Fallback: just show the full picker
+            }
+
+            datePickerDialog.show();
+        }
     }
 
-    private void calculateFilteredRevenue() {
-        int selectedId = radioGroupFilter.getCheckedRadioButtonId();
-        double revenue = 0;
-        String filterText = "";
+    private void calculateDayRevenue() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String date = dateFormat.format(calendar.getTime());
+        double revenue = databaseHelper.getRevenueByDate(date);
 
-        if (selectedId == R.id.radio_day) {
-            String date = dateFormat.format(calendar.getTime());
-            revenue = databaseHelper.getRevenueByDate(date);
-            filterText = "Revenue for " + date;
-        } else if (selectedId == R.id.radio_month) {
-            int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH) + 1;
-            revenue = databaseHelper.getRevenueByMonth(year, month);
-            filterText = String.format(Locale.getDefault(), "Revenue for %04d-%02d", year, month);
-        } else if (selectedId == R.id.radio_year) {
-            int year = calendar.get(Calendar.YEAR);
-            revenue = databaseHelper.getRevenueByYear(year);
-            filterText = "Revenue for " + year;
-        }
+        SimpleDateFormat displayFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
+        String filterText = "Revenue for " + displayFormat.format(calendar.getTime());
 
         tvFilterLabel.setText(filterText);
         tvFilteredRevenue.setText(String.format(Locale.getDefault(), "$%.2f", revenue));
+        tvFilterLabel.setVisibility(View.VISIBLE);
+        tvFilteredRevenue.setVisibility(View.VISIBLE);
+    }
+
+    private void calculateMonthRevenue() {
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        double revenue = databaseHelper.getRevenueByMonth(year, month);
+
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
+        String filterText = "Revenue for " + monthFormat.format(calendar.getTime());
+
+        tvFilterLabel.setText(filterText);
+        tvFilteredRevenue.setText(String.format(Locale.getDefault(), "$%.2f", revenue));
+        tvFilterLabel.setVisibility(View.VISIBLE);
+        tvFilteredRevenue.setVisibility(View.VISIBLE);
+    }
+
+    private void calculateYearRevenue() {
+        int year = calendar.get(Calendar.YEAR);
+        double revenue = databaseHelper.getRevenueByYear(year);
+
+        String filterText = "Revenue for " + year;
+
+        tvFilterLabel.setText(filterText);
+        tvFilteredRevenue.setText(String.format(Locale.getDefault(), "$%.2f", revenue));
+        tvFilterLabel.setVisibility(View.VISIBLE);
+        tvFilteredRevenue.setVisibility(View.VISIBLE);
     }
 
     @Override

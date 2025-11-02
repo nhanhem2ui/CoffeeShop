@@ -134,8 +134,10 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_product_list, menu);
+        MenuItem ordersItem = menu.findItem(R.id.action_orders);
         MenuItem revenueItem = menu.findItem(R.id.action_revenue);
         if (!isAdmin) {
+            ordersItem.setVisible(false);
             revenueItem.setVisible(false);
         }
         return true;
@@ -149,6 +151,11 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
             return true;
         } else if (id == R.id.action_cart) {
             startActivity(new Intent(this, CartActivity.class));
+            return true;
+        } else if (id == R.id.action_orders) {
+            if (isAdmin) {
+                startActivity(new Intent(this, OrderManagementActivity.class));
+            }
             return true;
         } else if (id == R.id.action_revenue) {
             if (isAdmin) {

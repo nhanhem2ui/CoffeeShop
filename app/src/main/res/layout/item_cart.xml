@@ -48,11 +48,11 @@
 
                 <ImageButton
                     android:id="@+id/btn_decrease"
-                    android:contentDescription="Decrease"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@android:drawable/btn_minus"
-                    android:background="?attr/selectableItemBackgroundBorderless"/>
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Decrease"
+                    android:src="@android:drawable/btn_minus" />
 
                 <TextView
                     android:id="@+id/tv_cart_quantity"

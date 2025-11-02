@@ -15,7 +15,7 @@ import java.util.Locale;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "CoffeeShop.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Users Table
     private static final String TABLE_USERS = "users";
@@ -46,6 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COL_ORDER_USER_ID = "user_id";
     private static final String COL_ORDER_TOTAL = "total_amount";
     private static final String COL_ORDER_DATE = "order_date";
+    private static final String COL_ORDER_STATUS = "status";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -78,12 +79,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY(" + COL_CART_USER_ID + ") REFERENCES " + TABLE_USERS + "(" + COL_USER_ID + "), " +
                 "FOREIGN KEY(" + COL_CART_PRODUCT_ID + ") REFERENCES " + TABLE_PRODUCTS + "(" + COL_PRODUCT_ID + "))";
 
-        // Create Orders Table
+        // Create Orders Table with status
         String createOrdersTable = "CREATE TABLE " + TABLE_ORDERS + " (" +
                 COL_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COL_ORDER_USER_ID + " INTEGER NOT NULL, " +
                 COL_ORDER_TOTAL + " REAL NOT NULL, " +
                 COL_ORDER_DATE + " TEXT NOT NULL, " +
+                COL_ORDER_STATUS + " TEXT NOT NULL DEFAULT 'pending', " +
                 "FOREIGN KEY(" + COL_ORDER_USER_ID + ") REFERENCES " + TABLE_USERS + "(" + COL_USER_ID + "))";
 
         db.execSQL(createUsersTable);
@@ -97,11 +99,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDERS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CART);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
-        onCreate(db);
+        if (oldVersion < 2) {
+            // Add status column to orders table
+            db.execSQL("ALTER TABLE " + TABLE_ORDERS + " ADD COLUMN " + COL_ORDER_STATUS + " TEXT NOT NULL DEFAULT 'pending'");
+        }
     }
 
     private void insertSampleProducts(SQLiteDatabase db) {
@@ -130,7 +131,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues adminValues = new ContentValues();
         adminValues.put(COL_USER_NAME, "Admin User");
         adminValues.put(COL_USER_EMAIL, "admin@coffeeshop.com");
-        adminValues.put(COL_USER_PASSWORD, "123"); //  Replace with a hashed password in a real app
+        adminValues.put(COL_USER_PASSWORD, "123");
         adminValues.put(COL_USER_ROLE, "admin");
         db.insert(TABLE_USERS, null, adminValues);
     }
@@ -357,7 +358,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // ========== ORDER OPERATIONS ==========
 
-    public boolean createOrder(int userId, double totalAmount) {
+    public boolean createOrder(int userId, double totalAmount, String status) {
         SQLiteDatabase db = this.getWritableDatabase();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         String currentDate = dateFormat.format(new Date());
@@ -366,14 +367,56 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COL_ORDER_USER_ID, userId);
         values.put(COL_ORDER_TOTAL, totalAmount);
         values.put(COL_ORDER_DATE, currentDate);
+        values.put(COL_ORDER_STATUS, status);
 
         long result = db.insert(TABLE_ORDERS, null, values);
         return result != -1;
     }
 
+    public boolean updateOrderStatus(int orderId, String status) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COL_ORDER_STATUS, status);
+
+        int result = db.update(TABLE_ORDERS, values,
+                COL_ORDER_ID + " = ?", new String[]{String.valueOf(orderId)});
+        return result > 0;
+    }
+
+    public List<Order> getPendingOrders() {
+        return getOrdersByStatus("pending");
+    }
+
+    public List<Order> getOrdersByStatus(String status) {
+        List<Order> orders = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT o.*, u." + COL_USER_NAME +
+                " FROM " + TABLE_ORDERS + " o " +
+                "INNER JOIN " + TABLE_USERS + " u ON o." + COL_ORDER_USER_ID + " = u." + COL_USER_ID +
+                " WHERE o." + COL_ORDER_STATUS + " = ? " +
+                "ORDER BY o." + COL_ORDER_DATE + " DESC";
+
+        Cursor cursor = db.rawQuery(query, new String[]{status});
+
+        while (cursor.moveToNext()) {
+            orders.add(new Order(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COL_ORDER_ID)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COL_ORDER_USER_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_USER_NAME)),
+                    cursor.getDouble(cursor.getColumnIndexOrThrow(COL_ORDER_TOTAL)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_ORDER_DATE)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_ORDER_STATUS))
+            ));
+        }
+        cursor.close();
+        return orders;
+    }
+
     public double getTotalRevenue() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT SUM(" + COL_ORDER_TOTAL + ") FROM " + TABLE_ORDERS, null);
+        Cursor cursor = db.rawQuery("SELECT SUM(" + COL_ORDER_TOTAL + ") FROM " + TABLE_ORDERS +
+                " WHERE " + COL_ORDER_STATUS + " = 'accepted'", null);
         double total = 0.0;
         if (cursor.moveToFirst()) {
             total = cursor.getDouble(0);
@@ -386,7 +429,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(
                 "SELECT SUM(" + COL_ORDER_TOTAL + ") FROM " + TABLE_ORDERS +
-                        " WHERE DATE(" + COL_ORDER_DATE + ") = ?", new String[]{date});
+                        " WHERE DATE(" + COL_ORDER_DATE + ") = ? AND " + COL_ORDER_STATUS + " = 'accepted'",
+                new String[]{date});
         double total = 0.0;
         if (cursor.moveToFirst()) {
             total = cursor.getDouble(0);
@@ -400,7 +444,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String monthStr = String.format(Locale.getDefault(), "%04d-%02d", year, month);
         Cursor cursor = db.rawQuery(
                 "SELECT SUM(" + COL_ORDER_TOTAL + ") FROM " + TABLE_ORDERS +
-                        " WHERE strftime('%Y-%m', " + COL_ORDER_DATE + ") = ?", new String[]{monthStr});
+                        " WHERE strftime('%Y-%m', " + COL_ORDER_DATE + ") = ? AND " +
+                        COL_ORDER_STATUS + " = 'accepted'",
+                new String[]{monthStr});
         double total = 0.0;
         if (cursor.moveToFirst()) {
             total = cursor.getDouble(0);
@@ -413,7 +459,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(
                 "SELECT SUM(" + COL_ORDER_TOTAL + ") FROM " + TABLE_ORDERS +
-                        " WHERE strftime('%Y', " + COL_ORDER_DATE + ") = ?",
+                        " WHERE strftime('%Y', " + COL_ORDER_DATE + ") = ? AND " +
+                        COL_ORDER_STATUS + " = 'accepted'",
                 new String[]{String.valueOf(year)});
         double total = 0.0;
         if (cursor.moveToFirst()) {

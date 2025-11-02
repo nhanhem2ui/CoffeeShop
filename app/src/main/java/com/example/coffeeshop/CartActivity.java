@@ -27,7 +27,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     private List<CartItem> cartItems;
     private DatabaseHelper databaseHelper;
     private TextView tvTotal, tvEmptyCart;
-    private Button btnCheckout;
+    private Button btnPlaceOrder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,16 +54,15 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         recyclerView = findViewById(R.id.recycler_view_cart);
         tvTotal = findViewById(R.id.tv_total_amount);
         tvEmptyCart = findViewById(R.id.tv_empty_cart);
-        btnCheckout = findViewById(R.id.btn_checkout);
+        btnPlaceOrder = findViewById(R.id.btn_place_order);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         cartItems = new ArrayList<>();
         adapter = new CartAdapter(this, cartItems, this);
-        //caches item views by ID
         adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
 
-        btnCheckout.setOnClickListener(v -> checkout());
+        btnPlaceOrder.setOnClickListener(v -> placeOrder());
     }
 
     private void loadCartItems() {
@@ -87,20 +86,18 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         if (cartItems.isEmpty()) {
             tvEmptyCart.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
-            btnCheckout.setEnabled(false);
+            btnPlaceOrder.setEnabled(false);
         } else {
             tvEmptyCart.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
-            btnCheckout.setEnabled(true);
+            btnPlaceOrder.setEnabled(true);
         }
     }
 
     @Override
     public void onQuantityChanged(CartItem item, int newQuantity) {
-        // Update database first
         boolean success = databaseHelper.updateCartItemQuantity(item.getCartId(), newQuantity);
         if (success) {
-            // Reload the entire cart to ensure data consistency
             loadCartItems();
         } else {
             Toast.makeText(this, "Failed to update quantity", Toast.LENGTH_SHORT).show();
@@ -115,7 +112,6 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
                 .setPositiveButton("Remove", (dialog, which) -> {
                     boolean success = databaseHelper.removeFromCart(item.getCartId());
                     if (success) {
-                        // Reload the entire cart to ensure data consistency
                         loadCartItems();
                         Toast.makeText(CartActivity.this, "Item removed", Toast.LENGTH_SHORT).show();
                     } else {
@@ -126,26 +122,28 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
                 .show();
     }
 
-    private void checkout() {
+    private void placeOrder() {
         double totalAmount = 0;
         for (CartItem item : cartItems) {
             totalAmount += item.getSubtotal();
         }
-        final double total = totalAmount; // Make it final for lambda
+        final double total = totalAmount;
 
         new AlertDialog.Builder(this)
-                .setTitle("Checkout")
-                .setMessage(String.format(Locale.getDefault(), "Complete order for $%.2f?", total))
-                .setPositiveButton("Confirm", (dialog, which) -> {
+                .setTitle("Place Order")
+                .setMessage(String.format(Locale.getDefault(),
+                        "Place order for $%.2f?\n\nYour order will be sent to the kitchen and prepared once the admin accepts it.",
+                        total))
+                .setPositiveButton("Place Order", (dialog, which) -> {
                     int userId = SessionManager.getInstance().getUserId();
-                    boolean orderCreated = databaseHelper.createOrder(userId, total);
+                    boolean orderCreated = databaseHelper.createOrder(userId, total, "pending");
                     boolean cartCleared = databaseHelper.clearCart(userId);
 
                     if (orderCreated && cartCleared) {
-                        Toast.makeText(this, "Order placed successfully!", Toast.LENGTH_LONG).show();
-                        loadCartItems(); // Reload to show empty cart
+                        Toast.makeText(this, "Order placed successfully! Waiting for acceptance...", Toast.LENGTH_LONG).show();
+                        loadCartItems();
                     } else {
-                        Toast.makeText(this, "Failed to complete order", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Failed to place order", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -155,7 +153,6 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
     @Override
     protected void onResume() {
         super.onResume();
-        // Reload cart items when returning to this activity
         loadCartItems();
     }
 

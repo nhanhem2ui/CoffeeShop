@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CoffeeShop">
         <activity
+            android:name=".OrderManagementActivity"
+            android:exported="false" />
+        <activity
             android:name=".RevenueActivity"
             android:exported="false" />
         <activity
