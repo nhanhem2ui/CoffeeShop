@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
+//Observer
 public class ProductListActivity extends AppCompatActivity implements ProductAdapter.OnProductClickListener {
 
     private RecyclerView recyclerView;
@@ -64,6 +64,7 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
         etSearch = findViewById(R.id.et_search);
         fabAddProduct = findViewById(R.id.fab_add_product);
 
+        //vertically
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         productList = new ArrayList<>();
         filteredList = new ArrayList<>();
@@ -117,14 +118,11 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
     }
 
     private void sortProducts() {
-        Collections.sort(filteredList, new Comparator<Product>() {
-            @Override
-            public int compare(Product p1, Product p2) {
-                if (isAscending) {
-                    return Double.compare(p1.getPrice(), p2.getPrice());
-                } else {
-                    return Double.compare(p2.getPrice(), p1.getPrice());
-                }
+        filteredList.sort((p1, p2) -> {
+            if (isAscending) {
+                return Double.compare(p1.getPrice(), p2.getPrice());
+            } else {
+                return Double.compare(p2.getPrice(), p1.getPrice());
             }
         });
         isAscending = !isAscending;
