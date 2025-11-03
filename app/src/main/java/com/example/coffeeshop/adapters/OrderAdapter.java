@@ -32,6 +32,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         this.orderList = orderList;
         this.listener = listener;
     }
+    
+    public OrderAdapter(Context context, List<Order> orderList) {
+        this.context = context;
+        this.orderList = orderList;
+        this.listener = null;
+    }
 
     @NonNull
     @Override
@@ -50,17 +56,24 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         holder.tvDate.setText("Date: " + formatDate(order.getOrderDate()));
         holder.tvStatus.setText("Status: " + order.getStatus().toUpperCase());
 
-        holder.btnAccept.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onAcceptClick(order);
-            }
-        });
+        if (listener != null) {
+            holder.btnAccept.setVisibility(View.VISIBLE);
+            holder.btnReject.setVisibility(View.VISIBLE);
+            holder.btnAccept.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onAcceptClick(order);
+                }
+            });
 
-        holder.btnReject.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onRejectClick(order);
-            }
-        });
+            holder.btnReject.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onRejectClick(order);
+                }
+            });
+        } else {
+            holder.btnAccept.setVisibility(View.GONE);
+            holder.btnReject.setVisibility(View.GONE);
+        }
     }
 
     @Override
