@@ -470,4 +470,80 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return total;
     }
+    public List<Order> getOrdersByDate(String date) {
+        List<Order> orders = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT o.*, u." + COL_USER_NAME +
+                " FROM " + TABLE_ORDERS + " o " +
+                "INNER JOIN " + TABLE_USERS + " u ON o." + COL_ORDER_USER_ID + " = u." + COL_USER_ID +
+                " WHERE DATE(o." + COL_ORDER_DATE + ") = ? AND o." + COL_ORDER_STATUS + " = 'accepted'" +
+                " ORDER BY o." + COL_ORDER_DATE + " DESC";
+
+        Cursor cursor = db.rawQuery(query, new String[]{date});
+        while (cursor.moveToNext()) {
+            orders.add(new Order(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COL_ORDER_ID)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COL_ORDER_USER_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_USER_NAME)),
+                    cursor.getDouble(cursor.getColumnIndexOrThrow(COL_ORDER_TOTAL)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_ORDER_DATE)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_ORDER_STATUS))
+            ));
+        }
+        cursor.close();
+        return orders;
+    }
+
+    public List<Order> getOrdersByMonth(int year, int month) {
+        List<Order> orders = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String monthStr = String.format(Locale.getDefault(), "%04d-%02d", year, month);
+
+        String query = "SELECT o.*, u." + COL_USER_NAME +
+                " FROM " + TABLE_ORDERS + " o " +
+                "INNER JOIN " + TABLE_USERS + " u ON o." + COL_ORDER_USER_ID + " = u." + COL_USER_ID +
+                " WHERE strftime('%Y-%m', o." + COL_ORDER_DATE + ") = ? AND o." + COL_ORDER_STATUS + " = 'accepted'" +
+                " ORDER BY o." + COL_ORDER_DATE + " DESC";
+
+        Cursor cursor = db.rawQuery(query, new String[]{monthStr});
+        while (cursor.moveToNext()) {
+            orders.add(new Order(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COL_ORDER_ID)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COL_ORDER_USER_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_USER_NAME)),
+                    cursor.getDouble(cursor.getColumnIndexOrThrow(COL_ORDER_TOTAL)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_ORDER_DATE)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_ORDER_STATUS))
+            ));
+        }
+        cursor.close();
+        return orders;
+    }
+
+    public List<Order> getOrdersByYear(int year) {
+        List<Order> orders = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String yearStr = String.valueOf(year);
+
+        String query = "SELECT o.*, u." + COL_USER_NAME +
+                " FROM " + TABLE_ORDERS + " o " +
+                "INNER JOIN " + TABLE_USERS + " u ON o." + COL_ORDER_USER_ID + " = u." + COL_USER_ID +
+                " WHERE strftime('%Y', o." + COL_ORDER_DATE + ") = ? AND o." + COL_ORDER_STATUS + " = 'accepted'" +
+                " ORDER BY o." + COL_ORDER_DATE + " DESC";
+
+        Cursor cursor = db.rawQuery(query, new String[]{yearStr});
+        while (cursor.moveToNext()) {
+            orders.add(new Order(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COL_ORDER_ID)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COL_ORDER_USER_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_USER_NAME)),
+                    cursor.getDouble(cursor.getColumnIndexOrThrow(COL_ORDER_TOTAL)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_ORDER_DATE)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_ORDER_STATUS))
+            ));
+        }
+        cursor.close();
+        return orders;
+    }
+
 }

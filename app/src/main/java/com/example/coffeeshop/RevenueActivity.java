@@ -11,11 +11,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.example.coffeeshop.adapters.OrderAdapter;
 import com.example.coffeeshop.database.DatabaseHelper;
+import com.example.coffeeshop.models.Order;
 import com.example.coffeeshop.utils.LocaleHelper;
 import com.example.coffeeshop.utils.SessionManager;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class RevenueActivity extends AppCompatActivity {
@@ -25,6 +30,8 @@ public class RevenueActivity extends AppCompatActivity {
     private RadioGroup radioGroupFilter;
     private Button btnSelectDate;
     private Calendar calendar;
+    private RecyclerView rvOrders;
+    private OrderAdapter orderAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +70,8 @@ public class RevenueActivity extends AppCompatActivity {
         tvFilterLabel = findViewById(R.id.tv_filter_label);
         radioGroupFilter = findViewById(R.id.radio_group_filter);
         btnSelectDate = findViewById(R.id.btn_select_date);
+        rvOrders = findViewById(R.id.rv_orders);
+        rvOrders.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void loadRevenue() {
@@ -75,6 +84,7 @@ public class RevenueActivity extends AppCompatActivity {
             btnSelectDate.setVisibility(View.VISIBLE);
             tvFilteredRevenue.setVisibility(View.GONE);
             tvFilterLabel.setVisibility(View.GONE);
+            rvOrders.setVisibility(View.GONE);
 
             // Update button text based on selection
             if (checkedId == R.id.radio_day) {
@@ -152,40 +162,39 @@ public class RevenueActivity extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String date = dateFormat.format(calendar.getTime());
         double revenue = databaseHelper.getRevenueByDate(date);
-
-        SimpleDateFormat displayFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
-        String filterText = getString(R.string.revenue_for_date, displayFormat.format(calendar.getTime()));
-
-        tvFilterLabel.setText(filterText);
-        tvFilteredRevenue.setText(String.format(Locale.getDefault(), "$%.2f", revenue));
-        tvFilterLabel.setVisibility(View.VISIBLE);
-        tvFilteredRevenue.setVisibility(View.VISIBLE);
+        List<Order> orders = databaseHelper.getOrdersByDate(date);
+        updateRevenueUI(revenue, orders, getString(R.string.revenue_for_date, date));
     }
 
     private void calculateMonthRevenue() {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
         double revenue = databaseHelper.getRevenueByMonth(year, month);
-
+        List<Order> orders = databaseHelper.getOrdersByMonth(year, month);
         SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
-        String filterText = getString(R.string.revenue_for_date, monthFormat.format(calendar.getTime()));
-
-        tvFilterLabel.setText(filterText);
-        tvFilteredRevenue.setText(String.format(Locale.getDefault(), "$%.2f", revenue));
-        tvFilterLabel.setVisibility(View.VISIBLE);
-        tvFilteredRevenue.setVisibility(View.VISIBLE);
+        updateRevenueUI(revenue, orders, getString(R.string.revenue_for_date, monthFormat.format(calendar.getTime())));
     }
 
     private void calculateYearRevenue() {
         int year = calendar.get(Calendar.YEAR);
         double revenue = databaseHelper.getRevenueByYear(year);
+        List<Order> orders = databaseHelper.getOrdersByYear(year);
+        updateRevenueUI(revenue, orders, getString(R.string.revenue_for_year, year));
+    }
 
-        String filterText = getString(R.string.revenue_for_year, year);
-
+    private void updateRevenueUI(double revenue, List<Order> orders, String filterText) {
         tvFilterLabel.setText(filterText);
         tvFilteredRevenue.setText(String.format(Locale.getDefault(), "$%.2f", revenue));
         tvFilterLabel.setVisibility(View.VISIBLE);
         tvFilteredRevenue.setVisibility(View.VISIBLE);
+
+        if (orders != null && !orders.isEmpty()) {
+            orderAdapter = new OrderAdapter(this, orders);
+            rvOrders.setAdapter(orderAdapter);
+            rvOrders.setVisibility(View.VISIBLE);
+        } else {
+            rvOrders.setVisibility(View.GONE);
+        }
     }
 
     @Override
