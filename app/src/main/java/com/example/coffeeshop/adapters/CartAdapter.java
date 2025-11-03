@@ -48,10 +48,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.tvQuantity.setText(String.valueOf(item.getQuantity()));
         holder.tvSubtotal.setText(String.format(Locale.getDefault(), "$%.2f", item.getSubtotal()));
 
-        // Load image - check if it's a URL or drawable resource
+        // Load image
         String imageUrl = item.getProduct().getImageUrl();
         if (imageUrl != null && (imageUrl.startsWith("http://") || imageUrl.startsWith("https://"))) {
-            // Load from URL (Cloudinary)
             Glide.with(context)
                     .load(imageUrl)
                     .placeholder(R.drawable.coffee_default)
@@ -59,39 +58,27 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     .centerCrop()
                     .into(holder.ivProduct);
         } else {
-            // Load from drawable resources
             int imageResource = getImageResource(imageUrl);
             holder.ivProduct.setImageResource(imageResource);
         }
 
-        // Remove any existing click listeners to prevent stale references
-        holder.btnIncrease.setOnClickListener(null);
-        holder.btnDecrease.setOnClickListener(null);
-        holder.btnRemove.setOnClickListener(null);
+        // FIXED: Use final reference to current item for click listeners
+        final CartItem currentItem = item;
 
-        // Set new click listeners
         holder.btnIncrease.setOnClickListener(v -> {
-            int currentPosition = holder.getAdapterPosition();
-            if (currentPosition != RecyclerView.NO_POSITION && listener != null) {
-                CartItem currentItem = cartItems.get(currentPosition);
+            if (listener != null) {
                 listener.onQuantityChanged(currentItem, currentItem.getQuantity() + 1);
             }
         });
 
         holder.btnDecrease.setOnClickListener(v -> {
-            int currentPosition = holder.getAdapterPosition();
-            if (currentPosition != RecyclerView.NO_POSITION && listener != null) {
-                CartItem currentItem = cartItems.get(currentPosition);
-                if (currentItem.getQuantity() > 1) {
-                    listener.onQuantityChanged(currentItem, currentItem.getQuantity() - 1);
-                }
+            if (listener != null && currentItem.getQuantity() > 1) {
+                listener.onQuantityChanged(currentItem, currentItem.getQuantity() - 1);
             }
         });
 
         holder.btnRemove.setOnClickListener(v -> {
-            int currentPosition = holder.getAdapterPosition();
-            if (currentPosition != RecyclerView.NO_POSITION && listener != null) {
-                CartItem currentItem = cartItems.get(currentPosition);
+            if (listener != null) {
                 listener.onRemoveClick(currentItem);
             }
         });
@@ -104,15 +91,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     @Override
     public long getItemId(int position) {
-        return cartItems.get(position).getCartId() != 0
-                ? cartItems.get(position).getCartId()
-                : cartItems.get(position).hashCode();
+        return cartItems.get(position).getCartId();
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
+    // Remove getItemViewType override - not needed for stable IDs
 
     private int getImageResource(String imageName) {
         switch (imageName != null ? imageName.toLowerCase() : "") {

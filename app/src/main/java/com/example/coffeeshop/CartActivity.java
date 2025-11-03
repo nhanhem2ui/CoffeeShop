@@ -69,9 +69,13 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
     private void loadCartItems() {
         int userId = SessionManager.getInstance().getUserId();
+        List<CartItem> newItems = databaseHelper.getCartItems(userId);
+
         cartItems.clear();
-        cartItems.addAll(databaseHelper.getCartItems(userId));
+        cartItems.addAll(newItems);
+
         adapter.notifyDataSetChanged();
+
         updateTotal();
         updateEmptyState();
     }
@@ -136,6 +140,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
                 .setMessage(String.format(Locale.getDefault(), getString(R.string.place_order_message), total))
                 .setPositiveButton(R.string.place_order, (dialog, which) -> {
                     int userId = SessionManager.getInstance().getUserId();
+
                     boolean orderCreated = databaseHelper.createOrder(userId, total, "pending");
                     boolean cartCleared = databaseHelper.clearCart(userId);
 
