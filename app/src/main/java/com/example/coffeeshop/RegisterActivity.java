@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.coffeeshop.database.DatabaseHelper;
+import com.example.coffeeshop.utils.LocaleHelper;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -21,6 +22,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleHelper.applyLanguage(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
@@ -56,44 +58,44 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Validation
         if (TextUtils.isEmpty(fullName)) {
-            etFullName.setError("Full name is required");
+            etFullName.setError(getString(R.string.full_name_required));
             etFullName.requestFocus();
             return;
         }
 
         if (TextUtils.isEmpty(email)) {
-            etEmail.setError("Email is required");
+            etEmail.setError(getString(R.string.email_required));
             etEmail.requestFocus();
             return;
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            etEmail.setError("Please enter a valid email");
+            etEmail.setError(getString(R.string.email_invalid));
             etEmail.requestFocus();
             return;
         }
 
         if (TextUtils.isEmpty(password)) {
-            etPassword.setError("Password is required");
+            etPassword.setError(getString(R.string.password_required));
             etPassword.requestFocus();
             return;
         }
 
         if (password.length() < 6) {
-            etPassword.setError("Password must be at least 6 characters");
+            etPassword.setError(getString(R.string.password_too_short));
             etPassword.requestFocus();
             return;
         }
 
         if (!password.equals(confirmPassword)) {
-            etConfirmPassword.setError("Passwords do not match");
+            etConfirmPassword.setError(getString(R.string.passwords_do_not_match));
             etConfirmPassword.requestFocus();
             return;
         }
 
         // Check if email already exists
         if (databaseHelper.isEmailExists(email)) {
-            etEmail.setError("Email already registered");
+            etEmail.setError(getString(R.string.email_already_registered));
             etEmail.requestFocus();
             return;
         }
@@ -101,11 +103,11 @@ public class RegisterActivity extends AppCompatActivity {
         // Register user
         boolean success = databaseHelper.registerUser(fullName, email, password);
         if (success) {
-            Toast.makeText(this, "Registration successful! Please login.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.registration_successful, Toast.LENGTH_SHORT).show();
             startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             finish();
         } else {
-            Toast.makeText(this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.registration_failed, Toast.LENGTH_SHORT).show();
         }
     }
 }

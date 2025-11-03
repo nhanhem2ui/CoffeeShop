@@ -1,44 +1,140 @@
 <resources>
     <string name="app_name">CoffeeShop</string>
-    <string name="address">Address</string>
-    <string name="logout">Logout</string>
+
+    <!-- Login & Register -->
+    <string name="welcome_back">Welcome Back</string>
+    <string name="create_account">Create Account</string>
+    <string name="join_community">Join our coffee community</string>
+    <string name="full_name">Full Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="remember_password">Remember Password</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
-    <string name="delete">Delete</string>
-    <string name="remove">Remove</string>
-    <string name="confirm_password">Confirm password</string>
-    <string name="total">Total</string>
+    <string name="dont_have_account">Don\'t have an account?</string>
+    <string name="already_have_account">Already have an account?</string>
+
+    <!-- Main Screen -->
+    <string name="coffee_shop">Coffee Shop</string>
+    <string name="daily_dose">Your daily dose of happiness</string>
+    <string name="version">Version 1.0</string>
+    <string name="select_language">Select Language</string>
+
+    <!-- Product List -->
     <string name="search">Search</string>
-    <string name="add_to_cart">Add to cart</string>
-    <string name="add_product">Add product</string>
-    <string name="checkout">Checkout</string>
-    <string name="username">Username</string>
-    <string name="product_name">Product name</string>
-    <string name="first_name">First Name</string>
-    <string name="name">Name</string>
-    <string name="all_products">All Products</string>
-    <string name="all_users">All Users</string>
-    <string name="create_account">Create Account</string>
-    <string name="edit_product">Edit Product</string>
-    <string name="edit">Edit</string>
-    <string name="phone">Phone</string>
-    <string name="quantity">Quantity</string>
-    <string name="sort_by">Sort by</string>
-    <string name="enter_username">Enter username</string>
-    <string name="enter_phone">Enter phone</string>
-    <string name="enter_password">Enter password</string>
-    <string name="enter_email">Enter email</string>
-    <string name="description">Description</string>
-    <string name="password">Password</string>
-    <string name="save">Save</string>
-    <string name="order_history">Order history</string>
-    <string name="no_products">No products</string>
-    <string name="cancel">Cancel</string>
-    <string name="last_name">Last Name</string>
+    <string name="sort_by_price">Sort by Price</string>
     <string name="cart">Cart</string>
+    <string name="manage_orders">Manage Orders</string>
+    <string name="revenue">Revenue</string>
+    <string name="logout">Logout</string>
+
+    <!-- Product Details -->
+    <string name="product_details">Product Details</string>
+    <string name="description">Description</string>
+    <string name="add_to_cart">Add to Cart</string>
+
+    <!-- Add/Edit Product -->
+    <string name="add_product">Add Product</string>
+    <string name="edit_product">Edit Product</string>
+    <string name="select_product_image">Select Product Image</string>
+    <string name="product_name">Product Name</string>
     <string name="price">Price</string>
-    <string name="email">Email</string>
-    <string name="select_image">Select image</string>
-    <string name="welcome">Welcome</string>
-    <string name="settings">Settings</string>
+    <string name="save_product">Save Product</string>
+
+    <!-- Cart -->
+    <string name="shopping_cart">Shopping Cart</string>
+    <string name="your_cart_empty">Your cart is empty</string>
+    <string name="total">Total: $%.2f</string>
+    <string name="place_order">Place Order</string>
+    <string name="increase">Increase</string>
+    <string name="decrease">Decrease</string>
+    <string name="remove">Remove</string>
+
+    <!-- Orders -->
+    <string name="pending_orders">Pending Orders</string>
+    <string name="no_pending_orders">No pending orders</string>
+    <string name="order_number">Order #%d</string>
+    <string name="customer">Customer: %s</string>
+    <string name="order_total">Total: $%.2f</string>
+    <string name="order_date">Date: %s</string>
+    <string name="order_status">Status: %s</string>
+    <string name="accept">Accept</string>
+    <string name="reject">Reject</string>
+
+    <!-- Revenue -->
+    <string name="revenue_statistics">Revenue Statistics</string>
+    <string name="total_revenue">Total Revenue</string>
+    <string name="filter_revenue">Filter Revenue</string>
+    <string name="by_day">By Day</string>
+    <string name="by_month">By Month</string>
+    <string name="by_year">By Year</string>
+    <string name="select_date">Select Date</string>
+    <string name="select_day">Select Day</string>
+    <string name="select_month">Select Month</string>
+    <string name="select_year">Select Year</string>
+    <string name="revenue_for_date">Revenue for %s</string>
+    <string name="revenue_for_year">Revenue for %d</string>
+
+    <!-- Permissions -->
+    <string name="permission_required">Permission Required</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="permission_denied">Permission denied. Cannot select images.</string>
+    <string name="permission_settings_message">Photo access permission is required to upload product images. Please enable it in app settings.</string>
+    <string name="open_settings">Open Settings</string>
+
+    <!-- Validation Messages -->
+    <string name="product_name_required">Product name is required</string>
+    <string name="description_required">Description is required</string>
+    <string name="price_required">Price is required</string>
+    <string name="price_must_be_positive">Price must be greater than 0</string>
+    <string name="invalid_price_format">Invalid price format</string>
+    <string name="image_upload_failed">Image upload failed: %s</string>
+    <string name="full_name_required">Full name is required</string>
+    <string name="email_required">Email is required</string>
+    <string name="email_invalid">Please enter a valid email</string>
+    <string name="password_required">Password is required</string>
+    <string name="password_too_short">Password must be at least 6 characters</string>
+    <string name="passwords_do_not_match">Passwords do not match</string>
+    <string name="email_already_registered">Email already registered</string>
+    <string name="registration_failed">Registration failed. Please try again.</string>
+
+    <!-- Messages -->
+    <string name="product_added">Product added</string>
+    <string name="product_updated">Product updated</string>
+    <string name="product_deleted">Product deleted</string>
+    <string name="operation_failed">Operation failed</string>
+    <string name="login_successful">Login successful!</string>
+    <string name="registration_successful">Registration successful! Please login.</string>
+    <string name="invalid_credentials">Invalid email or password</string>
+    <string name="access_denied">Access Denied</string>
+    <string name="item_removed">Item removed</string>
+    <string name="failed_to_remove">Failed to remove item</string>
+    <string name="order_placed">Order placed successfully! Waiting for acceptance...</string>
+    <string name="failed_to_place_order">Failed to place order</string>
+    <string name="order_accepted">Order accepted</string>
+    <string name="order_rejected">Order rejected</string>
+    <string name="failed_to_update">Failed to update</string>
+    <string name="added_to_cart">%s added to cart</string>
+    <string name="failed_to_add_cart">Failed to add to cart</string>
+
+    <!-- Dialogs -->
+    <string name="remove_item_title">Remove Item</string>
+    <string name="remove_item_message">Remove %s from cart?</string>
+    <string name="place_order_title">Place Order</string>
+    <string name="place_order_message">Place order for $%.2f?\n\nYour order will be sent to the kitchen and prepared once the admin accepts it.</string>
+    <string name="accept_order_title">Accept Order</string>
+    <string name="accept_order_message">Accept order #%d from %s?</string>
+    <string name="reject_order_title">Reject Order</string>
+    <string name="reject_order_message">Reject order #%d from %s?</string>
+    <string name="delete_product_title">Delete Product</string>
+    <string name="delete_product_message">Are you sure you want to delete %s?</string>
+
+    <!-- Common -->
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.coffeeshop.adapters.CartAdapter;
 import com.example.coffeeshop.database.DatabaseHelper;
 import com.example.coffeeshop.models.CartItem;
+import com.example.coffeeshop.utils.LocaleHelper;
 import com.example.coffeeshop.utils.SessionManager;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleHelper.applyLanguage(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
@@ -46,7 +48,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Shopping Cart");
+            getSupportActionBar().setTitle(R.string.shopping_cart);
         }
     }
 
@@ -79,7 +81,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         for (CartItem item : cartItems) {
             total += item.getSubtotal();
         }
-        tvTotal.setText(String.format(Locale.getDefault(), "Total: $%.2f", total));
+        tvTotal.setText(String.format(Locale.getDefault(), getString(R.string.total), total));
     }
 
     private void updateEmptyState() {
@@ -100,25 +102,25 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         if (success) {
             loadCartItems();
         } else {
-            Toast.makeText(this, "Failed to update quantity", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.failed_to_update, Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onRemoveClick(CartItem item) {
         new AlertDialog.Builder(this)
-                .setTitle("Remove Item")
-                .setMessage("Remove " + item.getProduct().getName() + " from cart?")
-                .setPositiveButton("Remove", (dialog, which) -> {
+                .setTitle(R.string.remove_item_title)
+                .setMessage(String.format(getString(R.string.remove_item_message), item.getProduct().getName()))
+                .setPositiveButton(R.string.remove, (dialog, which) -> {
                     boolean success = databaseHelper.removeFromCart(item.getCartId());
                     if (success) {
                         loadCartItems();
-                        Toast.makeText(CartActivity.this, "Item removed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CartActivity.this, R.string.item_removed, Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(CartActivity.this, "Failed to remove item", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CartActivity.this, R.string.failed_to_remove, Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
@@ -130,23 +132,21 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         final double total = totalAmount;
 
         new AlertDialog.Builder(this)
-                .setTitle("Place Order")
-                .setMessage(String.format(Locale.getDefault(),
-                        "Place order for $%.2f?\n\nYour order will be sent to the kitchen and prepared once the admin accepts it.",
-                        total))
-                .setPositiveButton("Place Order", (dialog, which) -> {
+                .setTitle(R.string.place_order_title)
+                .setMessage(String.format(Locale.getDefault(), getString(R.string.place_order_message), total))
+                .setPositiveButton(R.string.place_order, (dialog, which) -> {
                     int userId = SessionManager.getInstance().getUserId();
                     boolean orderCreated = databaseHelper.createOrder(userId, total, "pending");
                     boolean cartCleared = databaseHelper.clearCart(userId);
 
                     if (orderCreated && cartCleared) {
-                        Toast.makeText(this, "Order placed successfully! Waiting for acceptance...", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, R.string.order_placed, Toast.LENGTH_LONG).show();
                         loadCartItems();
                     } else {
-                        Toast.makeText(this, "Failed to place order", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.failed_to_place_order, Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 

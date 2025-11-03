@@ -40,7 +40,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Total Revenue"
+                        android:text="@string/total_revenue"
                         android:textColor="@color/black"
                         android:textSize="16sp"/>
 
@@ -59,7 +59,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Filter Revenue"
+                android:text="@string/filter_revenue"
                 android:textSize="18sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
@@ -76,28 +76,28 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/gray"
-                    android:text="By Day"/>
+                    android:text="@string/by_day"/>
 
                 <RadioButton
                     android:id="@+id/radio_month"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/gray"
-                    android:text="By Month"/>
+                    android:text="@string/by_month"/>
 
                 <RadioButton
                     android:id="@+id/radio_year"
                     android:layout_width="wrap_content"
                     android:textColor="@color/gray"
                     android:layout_height="wrap_content"
-                    android:text="By Year"/>
+                    android:text="@string/by_year"/>
             </RadioGroup>
 
             <Button
                 android:id="@+id/btn_select_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select Date"
+                android:text="@string/select_date"
                 android:textColor="@color/white"
                 android:background="@color/button"
                 android:visibility="gone"/>

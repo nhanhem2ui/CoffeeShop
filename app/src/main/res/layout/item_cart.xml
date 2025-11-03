@@ -17,7 +17,8 @@
             android:id="@+id/iv_cart_product"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/product_name"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -51,7 +52,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Decrease"
+                    android:contentDescription="@string/decrease"
                     android:src="@android:drawable/btn_minus" />
 
                 <TextView
@@ -65,7 +66,7 @@
 
                 <ImageButton
                     android:id="@+id/btn_increase"
-                    android:contentDescription="Increase"
+                    android:contentDescription="@string/increase"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:src="@android:drawable/btn_plus"
@@ -83,7 +84,7 @@
 
         <ImageButton
             android:id="@+id/btn_remove"
-            android:contentDescription="Remove"
+            android:contentDescription="@string/remove"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@android:drawable/ic_menu_delete"

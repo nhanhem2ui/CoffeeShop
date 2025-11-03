@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.coffeeshop.database.DatabaseHelper;
 import com.example.coffeeshop.models.User;
+import com.example.coffeeshop.utils.LocaleHelper;
 import com.example.coffeeshop.utils.SessionManager;
 
 public class LoginActivity extends AppCompatActivity {
@@ -30,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleHelper.applyLanguage(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -74,13 +76,13 @@ public class LoginActivity extends AppCompatActivity {
         String password = etPassword.getText().toString().trim();
 
         if (TextUtils.isEmpty(email)) {
-            etEmail.setError("Email is required");
+            etEmail.setError(getString(R.string.email_required));
             etEmail.requestFocus();
             return;
         }
 
         if (TextUtils.isEmpty(password)) {
-            etPassword.setError("Password is required");
+            etPassword.setError(getString(R.string.password_required));
             etPassword.requestFocus();
             return;
         }
@@ -103,11 +105,11 @@ public class LoginActivity extends AppCompatActivity {
             SessionManager.getInstance(LoginActivity.this).setUserName(user.getFullName());
             SessionManager.getInstance(LoginActivity.this).setUserRole(user.getRole());
 
-            Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.login_successful, Toast.LENGTH_SHORT).show();
             startActivity(new Intent(LoginActivity.this, ProductListActivity.class));
             finish();
         } else {
-            Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.invalid_credentials, Toast.LENGTH_SHORT).show();
         }
     }
 }

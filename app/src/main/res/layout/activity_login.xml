@@ -22,7 +22,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Welcome Back"
+            android:text="@string/welcome_back"
             android:textColor="@color/gray"
             android:textSize="28sp"
             android:textStyle="bold"
@@ -45,7 +45,7 @@
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray"
                 android:textColorHighlight="@color/gray"
-                android:hint="Email"
+                android:hint="@string/email"
                 android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -67,7 +67,7 @@
                 android:textColor="@color/black"
                 android:textColorHighlight="@color/gray"
                 android:textColorHint="@color/gray"
-                android:hint="Password"
+                android:hint="@string/password"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -75,7 +75,7 @@
             android:id="@+id/cb_remember_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Remember Password"
+            android:text="@string/remember_password"
             android:textColor="@color/black"
             android:buttonTint="@color/black"
             android:layout_marginBottom="24dp" />
@@ -84,7 +84,7 @@
             android:id="@+id/btn_login"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Login"
+            android:text="@string/login"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/white"
@@ -99,7 +99,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Don't have an account? "
+                android:text="@string/dont_have_account"
                 android:textColor="@color/gray" />
 
             <TextView
@@ -107,7 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
-                android:text="Register"
+                android:text=" @string/register"
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:clickable="true" />

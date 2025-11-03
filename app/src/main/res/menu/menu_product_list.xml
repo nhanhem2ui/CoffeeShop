@@ -4,28 +4,28 @@
 
     <item
         android:id="@+id/action_sort"
-        android:title="Sort by Price"
+        android:title="@string/sort_by_price"
         android:icon="@android:drawable/ic_menu_sort_alphabetically"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_cart"
-        android:title="Cart"
+        android:title="@string/cart"
         android:icon="@drawable/ic_cart"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_orders"
-        android:title="Manage Orders"
+        android:title="@string/manage_orders"
         app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_revenue"
-        android:title="Revenue"
+        android:title="@string/revenue"
         app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_logout"
-        android:title="Logout"
+        android:title="@string/logout"
         app:showAsAction="never"/>
 </menu>

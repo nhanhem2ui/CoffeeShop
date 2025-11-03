@@ -12,6 +12,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.bumptech.glide.Glide;
 import com.example.coffeeshop.database.DatabaseHelper;
 import com.example.coffeeshop.models.Product;
+import com.example.coffeeshop.utils.LocaleHelper;
 import com.example.coffeeshop.utils.SessionManager;
 import java.util.Locale;
 
@@ -25,6 +26,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleHelper.applyLanguage(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
 
@@ -44,7 +46,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Product Details");
+            getSupportActionBar().setTitle(R.string.product_details);
         }
     }
 
@@ -91,9 +93,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         int userId = SessionManager.getInstance().getUserId();
         boolean success = databaseHelper.addToCart(userId, product.getId(), 1);
         if (success) {
-            Toast.makeText(this, product.getName() + " added to cart", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, String.format(getString(R.string.added_to_cart), product.getName()), Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Failed to add to cart", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.failed_to_add_cart, Toast.LENGTH_SHORT).show();
         }
     }
 

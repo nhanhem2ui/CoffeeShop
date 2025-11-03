@@ -1,44 +1,140 @@
 <resources>
-    <string name="app_name">Cà phê</string>
-    <string name="add_to_cart">Thêm vào giỏ hàng</string>
-    <string name="add_product">Thêm sản phẩm</string>
-    <string name="address">Địa chỉ</string>
-    <string name="all_products">Tất cả sản phẩm</string>
-    <string name="all_users">Tất cả người dùng</string>
-    <string name="cancel">Hủy bỏ</string>
-    <string name="cart">Giỏ hàng</string>
-    <string name="checkout">Thanh toán</string>
-    <string name="confirm_password">Xác nhận mật khẩu</string>
-    <string name="create_account">Tạo tài khoản</string>
-    <string name="delete">Xóa</string>
-    <string name="description">Mô tả</string>
-    <string name="edit">Sửa</string>
-    <string name="edit_product">Sửa sản phẩm</string>
+    <string name="app_name">Quán Cà Phê</string>
+
+    <!-- Login & Register -->
+    <string name="welcome_back">Chào Mừng Trở Lại</string>
+    <string name="create_account">Tạo Tài Khoản</string>
+    <string name="join_community">Tham gia cộng đồng cà phê của chúng tôi</string>
+    <string name="full_name">Họ và Tên</string>
     <string name="email">Email</string>
-    <string name="enter_email">Nhập email</string>
-    <string name="enter_password">Nhập mật khẩu</string>
-    <string name="enter_phone">Nhập số điện thoại</string>
-    <string name="enter_username">Nhập tên đăng nhập</string>
-    <string name="first_name">Tên</string>
-    <string name="last_name">Họ</string>
-    <string name="login">Đăng nhập</string>
-    <string name="logout">Đăng xuất</string>
-    <string name="name">Tên</string>
-    <string name="no_products">Không có sản phẩm</string>
-    <string name="order_history">Lịch sử đơn hàng</string>
-    <string name="password">Mật khẩu</string>
-    <string name="phone">Số điện thoại</string>
+    <string name="password">Mật Khẩu</string>
+    <string name="confirm_password">Xác Nhận Mật Khẩu</string>
+    <string name="remember_password">Nhớ Mật Khẩu</string>
+    <string name="login">Đăng Nhập</string>
+    <string name="register">Đăng Ký</string>
+    <string name="dont_have_account">Chưa có tài khoản?</string>
+    <string name="already_have_account">Đã có tài khoản?</string>
+
+    <!-- Main Screen -->
+    <string name="coffee_shop">Quán Cà Phê</string>
+    <string name="daily_dose">Liều hạnh phúc hàng ngày của bạn</string>
+    <string name="version">Phiên bản 1.0</string>
+    <string name="select_language">Chọn Ngôn Ngữ</string>
+
+    <!-- Product List -->
+    <string name="search">Tìm Kiếm</string>
+    <string name="sort_by_price">Sắp Xếp Theo Giá</string>
+    <string name="cart">Giỏ Hàng</string>
+    <string name="manage_orders">Quản Lý Đơn Hàng</string>
+    <string name="revenue">Doanh Thu</string>
+    <string name="logout">Đăng Xuất</string>
+
+    <!-- Product Details -->
+    <string name="product_details">Chi Tiết Sản Phẩm</string>
+    <string name="description">Mô Tả</string>
+    <string name="add_to_cart">Thêm Vào Giỏ</string>
+
+    <!-- Add/Edit Product -->
+    <string name="add_product">Thêm Sản Phẩm</string>
+    <string name="edit_product">Sửa Sản Phẩm</string>
+    <string name="select_product_image">Chọn Hình Ảnh Sản Phẩm</string>
+    <string name="product_name">Tên Sản Phẩm</string>
     <string name="price">Giá</string>
-    <string name="product_name">Tên sản phẩm</string>
-    <string name="quantity">Số lượng</string>
-    <string name="register">Đăng ký</string>
+    <string name="save_product">Lưu Sản Phẩm</string>
+
+    <!-- Cart -->
+    <string name="shopping_cart">Giỏ Hàng</string>
+    <string name="your_cart_empty">Giỏ hàng của bạn đang trống</string>
+    <string name="total">Tổng: $%.2f</string>
+    <string name="place_order">Đặt Hàng</string>
+    <string name="increase">Tăng</string>
+    <string name="decrease">Giảm</string>
     <string name="remove">Xóa</string>
+
+    <!-- Orders -->
+    <string name="pending_orders">Đơn Hàng Chờ Xử Lý</string>
+    <string name="no_pending_orders">Không có đơn hàng chờ xử lý</string>
+    <string name="order_number">Đơn Hàng #%d</string>
+    <string name="customer">Khách Hàng: %s</string>
+    <string name="order_total">Tổng: $%.2f</string>
+    <string name="order_date">Ngày: %s</string>
+    <string name="order_status">Trạng Thái: %s</string>
+    <string name="accept">Chấp Nhận</string>
+    <string name="reject">Từ Chối</string>
+
+    <!-- Revenue -->
+    <string name="revenue_statistics">Thống Kê Doanh Thu</string>
+    <string name="total_revenue">Tổng Doanh Thu</string>
+    <string name="filter_revenue">Lọc Doanh Thu</string>
+    <string name="by_day">Theo Ngày</string>
+    <string name="by_month">Theo Tháng</string>
+    <string name="by_year">Theo Năm</string>
+    <string name="select_date">Chọn Ngày</string>
+    <string name="select_day">Chọn Ngày</string>
+    <string name="select_month">Chọn Tháng</string>
+    <string name="select_year">Chọn Năm</string>
+    <string name="revenue_for_date">Doanh thu cho %s</string>
+    <string name="revenue_for_year">Doanh thu năm %d</string>
+
+    <!-- Permissions -->
+    <string name="permission_required">Yêu Cầu Quyền</string>
+    <string name="grant_permission">Cấp Quyền</string>
+    <string name="permission_denied">Từ chối quyền. Không thể chọn hình ảnh.</string>
+    <string name="permission_settings_message">Quyền truy cập ảnh là bắt buộc để tải lên hình ảnh sản phẩm. Vui lòng bật trong cài đặt ứng dụng.</string>
+    <string name="open_settings">Mở Cài Đặt</string>
+
+    <!-- Validation Messages -->
+    <string name="product_name_required">Tên sản phẩm là bắt buộc</string>
+    <string name="description_required">Mô tả là bắt buộc</string>
+    <string name="price_required">Giá là bắt buộc</string>
+    <string name="price_must_be_positive">Giá phải lớn hơn 0</string>
+    <string name="invalid_price_format">Định dạng giá không hợp lệ</string>
+    <string name="image_upload_failed">Tải lên hình ảnh thất bại: %s</string>
+    <string name="full_name_required">Họ tên là bắt buộc</string>
+    <string name="email_required">Email là bắt buộc</string>
+    <string name="email_invalid">Vui lòng nhập email hợp lệ</string>
+    <string name="password_required">Mật khẩu là bắt buộc</string>
+    <string name="password_too_short">Mật khẩu phải có ít nhất 6 ký tự</string>
+    <string name="passwords_do_not_match">Mật khẩu không khớp</string>
+    <string name="email_already_registered">Email đã được đăng ký</string>
+    <string name="registration_failed">Đăng ký thất bại. Vui lòng thử lại.</string>
+
+    <!-- Messages -->
+    <string name="product_added">Đã thêm sản phẩm</string>
+    <string name="product_updated">Đã cập nhật sản phẩm</string>
+    <string name="product_deleted">Đã xóa sản phẩm</string>
+    <string name="operation_failed">Thao tác thất bại</string>
+    <string name="login_successful">Đăng nhập thành công!</string>
+    <string name="registration_successful">Đăng ký thành công! Vui lòng đăng nhập.</string>
+    <string name="invalid_credentials">Email hoặc mật khẩu không đúng</string>
+    <string name="access_denied">Truy Cập Bị Từ Chối</string>
+    <string name="item_removed">Đã xóa sản phẩm</string>
+    <string name="failed_to_remove">Không thể xóa sản phẩm</string>
+    <string name="order_placed">Đặt hàng thành công! Đang chờ xác nhận...</string>
+    <string name="failed_to_place_order">Không thể đặt hàng</string>
+    <string name="order_accepted">Đã chấp nhận đơn hàng</string>
+    <string name="order_rejected">Đã từ chối đơn hàng</string>
+    <string name="failed_to_update">Không thể cập nhật</string>
+    <string name="added_to_cart">Đã thêm %s vào giỏ hàng</string>
+    <string name="failed_to_add_cart">Không thể thêm vào giỏ hàng</string>
+
+    <!-- Dialogs -->
+    <string name="remove_item_title">Xóa Sản Phẩm</string>
+    <string name="remove_item_message">Xóa %s khỏi giỏ hàng?</string>
+    <string name="place_order_title">Đặt Hàng</string>
+    <string name="place_order_message">Đặt hàng với tổng giá $%.2f?\n\nĐơn hàng của bạn sẽ được gửi đến bếp và chuẩn bị sau khi quản trị viên chấp nhận.</string>
+    <string name="accept_order_title">Chấp Nhận Đơn Hàng</string>
+    <string name="accept_order_message">Chấp nhận đơn hàng #%d từ %s?</string>
+    <string name="reject_order_title">Từ Chối Đơn Hàng</string>
+    <string name="reject_order_message">Từ chối đơn hàng #%d từ %s?</string>
+    <string name="delete_product_title">Xóa Sản Phẩm</string>
+    <string name="delete_product_message">Bạn có chắc chắn muốn xóa %s?</string>
+
+    <!-- Common -->
+    <string name="cancel">Hủy</string>
+    <string name="delete">Xóa</string>
+    <string name="edit">Sửa</string>
     <string name="save">Lưu</string>
-    <string name="search">Tìm kiếm</string>
-    <string name="select_image">Chọn ảnh</string>
-    <string name="settings">Cài đặt</string>
-    <string name="sort_by">Sắp xếp theo</string>
-    <string name="total">Tổng cộng</string>
-    <string name="username">Tên đăng nhập</string>
-    <string name="welcome">Chào mừng</string>
+    <string name="yes">Có</string>
+    <string name="no">Không</string>
 </resources>

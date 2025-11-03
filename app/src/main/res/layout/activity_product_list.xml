@@ -35,7 +35,7 @@
             android:textColor="@color/black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Search" />
+            android:hint="@string/search" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -52,5 +52,5 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@android:drawable/ic_input_add"
-        android:contentDescription="Add product" />
+        android:contentDescription="@string/add_product" />
 </LinearLayout>

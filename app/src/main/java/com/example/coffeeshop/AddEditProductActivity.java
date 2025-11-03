@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.example.coffeeshop.database.DatabaseHelper;
 import com.example.coffeeshop.models.Product;
 import com.example.coffeeshop.utils.CloudinaryHelper;
+import com.example.coffeeshop.utils.LocaleHelper;
 import com.example.coffeeshop.utils.PermissionHandler;
 import com.example.coffeeshop.utils.SessionManager;
 
@@ -45,11 +46,12 @@ public class AddEditProductActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleHelper.applyLanguage(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_product);
 
         if (!SessionManager.getInstance().isAdmin()) {
-            Toast.makeText(this, "Access Denied", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.access_denied, Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, ProductListActivity.class));
             finish();
             return;
@@ -81,7 +83,7 @@ public class AddEditProductActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(isEditMode ? "Edit Product" : "Add Product");
+            getSupportActionBar().setTitle(isEditMode ? R.string.edit_product : R.string.add_product);
         }
     }
 
@@ -160,12 +162,12 @@ public class AddEditProductActivity extends AppCompatActivity {
 
     private void showPermissionRationale() {
         new AlertDialog.Builder(this)
-                .setTitle("Permission Required")
+                .setTitle(R.string.permission_required)
                 .setMessage(PermissionHandler.getPermissionExplanation())
-                .setPositiveButton("Grant Permission", (dialog, which) -> {
+                .setPositiveButton(R.string.grant_permission, (dialog, which) -> {
                     PermissionHandler.requestImagePermission(this);
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
@@ -182,8 +184,7 @@ public class AddEditProductActivity extends AppCompatActivity {
                 if (!PermissionHandler.shouldShowRationale(this)) {
                     showSettingsDialog();
                 } else {
-                    Toast.makeText(this, "Permission denied. Cannot select images.",
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -191,16 +192,15 @@ public class AddEditProductActivity extends AppCompatActivity {
 
     private void showSettingsDialog() {
         new AlertDialog.Builder(this)
-                .setTitle("Permission Required")
-                .setMessage("Photo access permission is required to upload product images. " +
-                        "Please enable it in app settings.")
-                .setPositiveButton("Open Settings", (dialog, which) -> {
+                .setTitle(R.string.permission_required)
+                .setMessage(R.string.permission_settings_message)
+                .setPositiveButton(R.string.open_settings, (dialog, which) -> {
                     Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                     Uri uri = Uri.fromParts("package", getPackageName(), null);
                     intent.setData(uri);
                     startActivity(intent);
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
@@ -216,19 +216,19 @@ public class AddEditProductActivity extends AppCompatActivity {
         String priceStr = etPrice.getText().toString().trim();
 
         if (TextUtils.isEmpty(name)) {
-            etName.setError("Product name is required");
+            etName.setError(getString(R.string.product_name_required));
             etName.requestFocus();
             return;
         }
 
         if (TextUtils.isEmpty(description)) {
-            etDescription.setError("Description is required");
+            etDescription.setError(getString(R.string.description_required));
             etDescription.requestFocus();
             return;
         }
 
         if (TextUtils.isEmpty(priceStr)) {
-            etPrice.setError("Price is required");
+            etPrice.setError(getString(R.string.price_required));
             etPrice.requestFocus();
             return;
         }
@@ -237,12 +237,12 @@ public class AddEditProductActivity extends AppCompatActivity {
         try {
             price = Double.parseDouble(priceStr);
             if (price <= 0) {
-                etPrice.setError("Price must be greater than 0");
+                etPrice.setError(getString(R.string.price_must_be_positive));
                 etPrice.requestFocus();
                 return;
             }
         } catch (NumberFormatException e) {
-            etPrice.setError("Invalid price format");
+            etPrice.setError(getString(R.string.invalid_price_format));
             etPrice.requestFocus();
             return;
         }
@@ -280,7 +280,7 @@ public class AddEditProductActivity extends AppCompatActivity {
                             progressBar.setVisibility(View.GONE);
                             btnSave.setEnabled(true);
                             Toast.makeText(AddEditProductActivity.this,
-                                    "Image upload failed: " + error, Toast.LENGTH_LONG).show();
+                                    getString(R.string.image_upload_failed, error), Toast.LENGTH_LONG).show();
                         });
                     }
                 }
@@ -301,11 +301,11 @@ public class AddEditProductActivity extends AppCompatActivity {
         }
 
         if (success) {
-            Toast.makeText(this, isEditMode ? "Product updated" : "Product added",
+            Toast.makeText(this, isEditMode ? R.string.product_updated : R.string.product_added,
                     Toast.LENGTH_SHORT).show();
             finish();
         } else {
-            Toast.makeText(this, "Operation failed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.operation_failed, Toast.LENGTH_SHORT).show();
         }
     }
 

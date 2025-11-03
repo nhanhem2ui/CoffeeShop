@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.coffeeshop.adapters.OrderAdapter;
 import com.example.coffeeshop.database.DatabaseHelper;
 import com.example.coffeeshop.models.Order;
+import com.example.coffeeshop.utils.LocaleHelper;
 import com.example.coffeeshop.utils.SessionManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,11 +29,12 @@ public class OrderManagementActivity extends AppCompatActivity implements OrderA
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleHelper.applyLanguage(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_management);
 
         if (!SessionManager.getInstance().isAdmin()) {
-            Toast.makeText(this, "Access Denied", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.access_denied, Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, ProductListActivity.class));
             finish();
             return;
@@ -50,7 +52,7 @@ public class OrderManagementActivity extends AppCompatActivity implements OrderA
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Pending Orders");
+            getSupportActionBar().setTitle(R.string.pending_orders);
         }
     }
 
@@ -84,36 +86,36 @@ public class OrderManagementActivity extends AppCompatActivity implements OrderA
     @Override
     public void onAcceptClick(Order order) {
         new AlertDialog.Builder(this)
-                .setTitle("Accept Order")
-                .setMessage("Accept order #" + order.getId() + " from " + order.getUserName() + "?")
-                .setPositiveButton("Accept", (dialog, which) -> {
+                .setTitle(R.string.accept_order_title)
+                .setMessage(String.format(getString(R.string.accept_order_message), order.getId(), order.getUserName()))
+                .setPositiveButton(R.string.accept, (dialog, which) -> {
                     boolean success = databaseHelper.updateOrderStatus(order.getId(), "accepted");
                     if (success) {
-                        Toast.makeText(this, "Order accepted", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.order_accepted, Toast.LENGTH_SHORT).show();
                         loadOrders();
                     } else {
-                        Toast.makeText(this, "Failed to accept order", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.operation_failed, Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
     @Override
     public void onRejectClick(Order order) {
         new AlertDialog.Builder(this)
-                .setTitle("Reject Order")
-                .setMessage("Reject order #" + order.getId() + " from " + order.getUserName() + "?")
-                .setPositiveButton("Reject", (dialog, which) -> {
+                .setTitle(R.string.reject_order_title)
+                .setMessage(String.format(getString(R.string.reject_order_message), order.getId(), order.getUserName()))
+                .setPositiveButton(R.string.reject, (dialog, which) -> {
                     boolean success = databaseHelper.updateOrderStatus(order.getId(), "rejected");
                     if (success) {
-                        Toast.makeText(this, "Order rejected", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.order_rejected, Toast.LENGTH_SHORT).show();
                         loadOrders();
                     } else {
-                        Toast.makeText(this, "Failed to reject order", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.operation_failed, Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 

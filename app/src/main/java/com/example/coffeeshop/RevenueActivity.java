@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.example.coffeeshop.database.DatabaseHelper;
+import com.example.coffeeshop.utils.LocaleHelper;
 import com.example.coffeeshop.utils.SessionManager;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -27,11 +28,12 @@ public class RevenueActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleHelper.applyLanguage(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_revenue);
 
         if (!SessionManager.getInstance().isAdmin()) {
-            Toast.makeText(this, "Access Denied", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.access_denied, Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, ProductListActivity.class));
             finish();
             return;
@@ -51,7 +53,7 @@ public class RevenueActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Revenue Statistics");
+            getSupportActionBar().setTitle(R.string.revenue_statistics);
         }
     }
 
@@ -76,11 +78,11 @@ public class RevenueActivity extends AppCompatActivity {
 
             // Update button text based on selection
             if (checkedId == R.id.radio_day) {
-                btnSelectDate.setText("Select Day");
+                btnSelectDate.setText(R.string.select_day);
             } else if (checkedId == R.id.radio_month) {
-                btnSelectDate.setText("Select Month");
+                btnSelectDate.setText(R.string.select_month);
             } else if (checkedId == R.id.radio_year) {
-                btnSelectDate.setText("Select Year");
+                btnSelectDate.setText(R.string.select_year);
             }
         });
 
@@ -152,7 +154,7 @@ public class RevenueActivity extends AppCompatActivity {
         double revenue = databaseHelper.getRevenueByDate(date);
 
         SimpleDateFormat displayFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
-        String filterText = "Revenue for " + displayFormat.format(calendar.getTime());
+        String filterText = getString(R.string.revenue_for_date, displayFormat.format(calendar.getTime()));
 
         tvFilterLabel.setText(filterText);
         tvFilteredRevenue.setText(String.format(Locale.getDefault(), "$%.2f", revenue));
@@ -166,7 +168,7 @@ public class RevenueActivity extends AppCompatActivity {
         double revenue = databaseHelper.getRevenueByMonth(year, month);
 
         SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
-        String filterText = "Revenue for " + monthFormat.format(calendar.getTime());
+        String filterText = getString(R.string.revenue_for_date, monthFormat.format(calendar.getTime()));
 
         tvFilterLabel.setText(filterText);
         tvFilteredRevenue.setText(String.format(Locale.getDefault(), "$%.2f", revenue));
@@ -178,7 +180,7 @@ public class RevenueActivity extends AppCompatActivity {
         int year = calendar.get(Calendar.YEAR);
         double revenue = databaseHelper.getRevenueByYear(year);
 
-        String filterText = "Revenue for " + year;
+        String filterText = getString(R.string.revenue_for_year, year);
 
         tvFilterLabel.setText(filterText);
         tvFilteredRevenue.setText(String.format(Locale.getDefault(), "$%.2f", revenue));

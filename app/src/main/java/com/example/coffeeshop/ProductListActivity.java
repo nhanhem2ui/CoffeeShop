@@ -18,13 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.coffeeshop.adapters.ProductAdapter;
 import com.example.coffeeshop.database.DatabaseHelper;
 import com.example.coffeeshop.models.Product;
+import com.example.coffeeshop.utils.LocaleHelper;
 import com.example.coffeeshop.utils.SessionManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-//Observer
+
 public class ProductListActivity extends AppCompatActivity implements ProductAdapter.OnProductClickListener {
 
     private RecyclerView recyclerView;
@@ -39,6 +38,7 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleHelper.applyLanguage(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_list);
 
@@ -55,7 +55,7 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Coffee Shop");
+            getSupportActionBar().setTitle(R.string.coffee_shop);
         }
     }
 
@@ -64,7 +64,6 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
         etSearch = findViewById(R.id.et_search);
         fabAddProduct = findViewById(R.id.fab_add_product);
 
-        //vertically
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         productList = new ArrayList<>();
         filteredList = new ArrayList<>();
@@ -192,21 +191,21 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
     public void onDeleteClick(Product product) {
         if (!isAdmin) return;
         new AlertDialog.Builder(this)
-                .setTitle("Delete Product")
-                .setMessage("Are you sure you want to delete " + product.getName() + "?")
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                .setTitle(R.string.delete_product_title)
+                .setMessage(String.format(getString(R.string.delete_product_message), product.getName()))
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         boolean success = databaseHelper.deleteProduct(product.getId());
                         if (success) {
-                            Toast.makeText(ProductListActivity.this, "Product deleted", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ProductListActivity.this, R.string.product_deleted, Toast.LENGTH_SHORT).show();
                             loadProducts();
                         } else {
-                            Toast.makeText(ProductListActivity.this, "Failed to delete product", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ProductListActivity.this, R.string.operation_failed, Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
@@ -215,9 +214,9 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
         int userId = SessionManager.getInstance().getUserId();
         boolean success = databaseHelper.addToCart(userId, product.getId(), 1);
         if (success) {
-            Toast.makeText(this, product.getName() + " added to cart", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, String.format(getString(R.string.added_to_cart), product.getName()), Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Failed to add to cart", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.failed_to_add_cart, Toast.LENGTH_SHORT).show();
         }
     }
 
