@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import com.bumptech.glide.Glide;
 import com.example.coffeeshop.database.DatabaseHelper;
 import com.example.coffeeshop.models.Product;
@@ -31,6 +32,7 @@ public class AddEditProductActivity extends AppCompatActivity {
 
     private EditText etName, etDescription, etPrice;
     private ImageView ivProductPreview;
+    private CardView cvProductPreview;
     private Button btnSave, btnSelectImage;
     private ProgressBar progressBar;
     private DatabaseHelper databaseHelper;
@@ -88,6 +90,7 @@ public class AddEditProductActivity extends AppCompatActivity {
         etDescription = findViewById(R.id.et_product_description);
         etPrice = findViewById(R.id.et_product_price);
         ivProductPreview = findViewById(R.id.iv_product_preview);
+        cvProductPreview = findViewById(R.id.cv_product_preview);
         btnSelectImage = findViewById(R.id.btn_select_image);
         btnSave = findViewById(R.id.btn_save_product);
         progressBar = findViewById(R.id.progress_bar);
@@ -105,7 +108,7 @@ public class AddEditProductActivity extends AppCompatActivity {
                                     .load(selectedImageUri)
                                     .centerCrop()
                                     .into(ivProductPreview);
-                            ivProductPreview.setVisibility(View.VISIBLE);
+                            cvProductPreview.setVisibility(View.VISIBLE);
                         }
                     }
                 }
@@ -127,12 +130,12 @@ public class AddEditProductActivity extends AppCompatActivity {
                             .load(uploadedImageUrl)
                             .centerCrop()
                             .into(ivProductPreview);
-                    ivProductPreview.setVisibility(View.VISIBLE);
+                    cvProductPreview.setVisibility(View.VISIBLE);
                 } else {
                     // It's a drawable resource name
                     int imageResource = getImageResource(productToEdit.getImageUrl());
                     ivProductPreview.setImageResource(imageResource);
-                    ivProductPreview.setVisibility(View.VISIBLE);
+                    cvProductPreview.setVisibility(View.VISIBLE);
                 }
             }
         }
