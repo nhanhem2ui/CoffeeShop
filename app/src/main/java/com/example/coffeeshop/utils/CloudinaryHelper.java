@@ -40,7 +40,6 @@ public class CloudinaryHelper {
             try {
                 MediaManager.init(context, config);
                 isInitialized = true;
-                Log.d(TAG, "Cloudinary initialized successfully");
             } catch (Exception e) {
                 Log.e(TAG, "Failed to initialize Cloudinary", e);
             }
@@ -64,38 +63,27 @@ public class CloudinaryHelper {
                     .option("resource_type", "image")
                     .callback(new UploadCallback() {
                         @Override
-                        public void onStart(String requestId) {
-                            Log.d(TAG, "Upload started: " + requestId);
-                        }
+                        public void onStart(String requestId) {}
 
                         @Override
-                        public void onProgress(String requestId, long bytes, long totalBytes) {
-                            double progress = (double) bytes / totalBytes;
-                            Log.d(TAG, "Upload progress: " + (progress * 100) + "%");
-                        }
+                        public void onProgress(String requestId, long bytes, long totalBytes) {}
 
                         @Override
                         public void onSuccess(String requestId, Map resultData) {
                             String secureUrl = (String) resultData.get("secure_url");
-                            String publicId = (String) resultData.get("public_id");
-                            Log.d(TAG, "Upload successful. URL: " + secureUrl);
                             listener.onUploadSuccess(secureUrl);
                         }
 
                         @Override
                         public void onError(String requestId, ErrorInfo error) {
-                            Log.e(TAG, "Upload failed: " + error.getDescription());
                             listener.onUploadFailure(error.getDescription());
                         }
 
                         @Override
-                        public void onReschedule(String requestId, ErrorInfo error) {
-                            Log.w(TAG, "Upload rescheduled: " + error.getDescription());
-                        }
+                        public void onReschedule(String requestId, ErrorInfo error) {}
                     })
                     .dispatch();
         } catch (Exception e) {
-            Log.e(TAG, "Upload exception", e);
             listener.onUploadFailure(e.getMessage());
         }
     }
